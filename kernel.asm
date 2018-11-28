@@ -8,7 +8,11 @@ section .text ;;start of the command list
     dd - (0x1BADB002 + 0x00) ;; checksum that should set total between flag and magic nubmer back to zero.
 
 global start
+
+
 extern kernalMain  ;; kernamlMain is our main function defined in the c file
+
+
 
 start:
     cli ;; clear all interrupts

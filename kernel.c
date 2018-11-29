@@ -36,11 +36,8 @@ struct IDT_entry {
     unsigned short int offset_higherbits;
 };
 struct IDT_entry IDT[IDT_SIZE];
-void sleep(){
-    for(int i = 0; i < 2000000; i ++){
-    }
-    return;
-}void idt_init(void)
+
+void idt_init(void)
 {
     unsigned long keyboard_address;
     unsigned long idt_address;
@@ -128,6 +125,28 @@ void keyboard_handler_main(void)
     }
 }
 
+int stringLen(const char *str){
+        int i = 0;
+    while(str[i] != '\0'){
+        i++;
+    }    
+    if(i%2 == 1){
+       i++;
+    }
+return i;   
+}
+
+int centerLine(const char *str){
+    int x = stringLen(str);
+    return (80-x);
+}
+
+void sleep(){
+    for(int i = 0; i < 2000000; i ++){
+    }
+    return;
+}
+
 void clear(){
     cWindow = 0;
     while (cWindow < 80*25*2) {
@@ -169,6 +188,7 @@ void drawSlow(){
 
 
 void centerScreen(){
+    dWindow= 0;
     for(int i = 0; i < 12; i++){
         newLine();
     }   
@@ -226,34 +246,35 @@ void drawBox(){
 }
 
 void kernalMain(){
- 
+    unsigned int x = 0;
+    const char *str = "This is the Kernal Loading up..";
     clear();
     centerScreen();
-    draw();
+    x = centerLine(str);
+    dWindow += x;
+    drawSlow(str);
     str = ".........";
-    drawSlow();
+    drawSlow(str);
     clear();
     drawBox();
-    centerScreen();
-    dWindow += 62;
     str = "Welcome to OS Lite";
-    drawSlow();
+    centerScreen();
+    dWindow += centerLine(str);
+    drawSlow(str);
     str = "Home";
     newLine();
-    dWindow += 76;
-    draw();
+    dWindow += centerLine(str);
+    draw(str);
     str = "Help";
     newLine();
-    dWindow += 76;
-    draw();
+    dWindow += centerLine(str); 
+    draw(str);
     str = "Created by Matt Chris and Anthony";
     newLine();
     newLine();
     newLine();
-    dWindow += 46;
-    draw();
-    idt_init();
-    kb_init();
+    dWindow += centerLine(str);
+    draw(str);
     return;
     
 }

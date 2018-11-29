@@ -241,6 +241,15 @@ void drawBox(){
     blackLineBottom();
     borderRight();
 }
+void kprint(const char *str)
+{
+    unsigned int i = 0;
+    while (str[i] != '\0') {
+        videoPtr[dWindow++] = str[i++];
+        videoPtr[dWindow++] = 0x07;
+    }
+}
+
 
 
 
@@ -274,6 +283,19 @@ void kernalMain(){
     newLine();
     dWindow += centerLine(str);
     draw(str);
+    str = "";
+    sleep();
+    sleep();
+    clear();
+    drawBox();
+   
+    dWindow +=162;
+
+    kprint(str);
+  
+    idt_init();
+    kb_init();
+    while(1);
     return;
     
 }

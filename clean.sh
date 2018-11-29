@@ -1,4 +1,3 @@
 #!/bin/bash
-cd ~/Kernel 
+cd ~/Documents/Kernel
 rm kernel kasm.o kc.o
-

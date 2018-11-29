@@ -13,6 +13,7 @@
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 
 #define ENTER_KEY_CODE 0x1C
+#define BACKSPACE_KEY_CODE 0X0E
 
 extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
@@ -22,7 +23,7 @@ extern void load_idt(unsigned long *idt_ptr);
 
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int dWindow = 0; // loop count for drawing video on screen.
-unsigned int stringLocation = 0;  
+unsigned int stringLocation = 0;
 unsigned int cWindow = 0; // loop counter for clearing window/
 
 struct IDT_entry {
@@ -120,7 +121,15 @@ void keyboard_handler_main(void)
         if((dWindow+2) % 160 == 0){
             newLine();
             dWindow+=2;
-        } 
+        }
+        if(keycode == BACKSPACE_KEY_CODE){
+            if(162%dWindow==0){
+              return;
+            }
+            dWindow-=2;
+            videoPtr[dWindow]= ' ';
+            return;
+        }
         videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];
         videoPtr[dWindow++] = 0x30;
     }
@@ -130,11 +139,11 @@ int stringLen(const char *str){
         int i = 0;
     while(str[i] != '\0'){
         i++;
-    }    
+    }
     if(i%2 == 1){
        i++;
     }
-return i;   
+return i;
 }
 
 int centerLine(const char *str){
@@ -192,8 +201,8 @@ void centerScreen(){
     dWindow= 0;
     for(int i = 0; i < 12; i++){
         newLine();
-    }   
-    
+    }
+
 }
 void blackLineTop(){
     cWindow = 158;
@@ -205,7 +214,7 @@ void blackLineTop(){
     }
     videoPtr[cWindow] = ' ';
     videoPtr[cWindow+1] = 0x00;
-  
+
 }
 
 void blackLineBottom(){
@@ -241,7 +250,7 @@ void borderRight(){
 
 void drawBox(){
     blackLineTop();
-    borderLeft();  
+    borderLeft();
     blackLineBottom();
     borderRight();
 }
@@ -268,7 +277,7 @@ void kernalMain(){
     str = ".........";
     drawSlow(str);
     clear();
-    drawBox();
+    //drawBox();
     str = "Welcome to OS Lite";
     centerScreen();
     dWindow += centerLine(str);
@@ -279,7 +288,7 @@ void kernalMain(){
     draw(str);
     str = "Help";
     newLine();
-    dWindow += centerLine(str); 
+    dWindow += centerLine(str);
     draw(str);
     str = "Created by Matt Chris and Anthony";
     newLine();
@@ -292,14 +301,13 @@ void kernalMain(){
     sleep();
     clear();
     drawBox();
-   
-    dWindow +=162;
 
+    dWindow +=162;
     kprint(str);
-  
+
     idt_init();
     kb_init();
     while(1);
     return;
-    
+
 }

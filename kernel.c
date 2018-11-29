@@ -114,11 +114,15 @@ void keyboard_handler_main(void)
 
         if(keycode == ENTER_KEY_CODE) {
             newLine();
+            dWindow+=2;
             return;
         }
-
+        if((dWindow+2) % 160 == 0){
+            newLine();
+            dWindow+=2;
+        } 
         videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];
-        videoPtr[dWindow++] = 0x07;
+        videoPtr[dWindow++] = 0x30;
     }
 }
 
@@ -246,7 +250,7 @@ void kprint(const char *str)
     unsigned int i = 0;
     while (str[i] != '\0') {
         videoPtr[dWindow++] = str[i++];
-        videoPtr[dWindow++] = 0x07;
+        videoPtr[dWindow++] = 0x30;
     }
 }
 

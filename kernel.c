@@ -149,6 +149,7 @@ int stringLen(const char *str){ //checks string length
     while(str[i] != '\0'){
         i++;
     }
+    //fixing the 2 bit size requirement for not crazy things happening with the video pointer
     if(i%2 == 1){
        i++;
     }

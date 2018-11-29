@@ -20,9 +20,6 @@ extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
 
-
-
-const char *str = "This is the Kernal Loading up.";
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int dWindow = 0; // loop count for drawing video on screen.
 unsigned int stringLocation = 0;  
@@ -244,6 +241,8 @@ void drawBox(){
     blackLineBottom();
     borderRight();
 }
+
+
 
 void kernalMain(){
     unsigned int x = 0;

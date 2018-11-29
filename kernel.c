@@ -35,6 +35,9 @@ struct IDT_entry {
 };
 struct IDT_entry IDT[IDT_SIZE];
 
+
+//function created by Arjun Sreedharan
+//from https://arjunsreedharan.org/post/82710718100/kernels-101-lets-write-a-kernel
 void idt_init(void)
 {
     unsigned long keyboard_address;
@@ -110,32 +113,30 @@ void keyboard_handler_main(void)
     /* Lowest bit of status will be set if buffer is not empty */
     if (status & 0x01) {
         keycode = read_port(KEYBOARD_DATA_PORT);
-        if(keycode < 0)
-            return;
-
-        if(keycode == ENTER_KEY_CODE) {
-            newLine();
-            dWindow+=2;
+        if(keycode < 0){
             return;
         }
-        if((dWindow+2) % 160 == 0){
-            newLine();
-            dWindow+=2;
-        }
-        if(keycode == BACKSPACE_KEY_CODE){
-            if(162%dWindow==0){
+        if(keycode == BACKSPACE_KEY_CODE){  //checks for backspace key and replaces text on screen with a space
+            if(dWindow == 0)  //if at top left corner dont do anything
+            {
               return;
             }
             dWindow-=2;
             videoPtr[dWindow]= ' ';
             return;
         }
-        videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];
-        videoPtr[dWindow++] = 0x30;
+        if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
+            newLine();
+            return;
+        }
+
+
+        videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen
+        videoPtr[dWindow++] = 0x30; //set background color
     }
 }
 
-int stringLen(const char *str){
+int stringLen(const char *str){ //checks string length
         int i = 0;
     while(str[i] != '\0'){
         i++;
@@ -146,18 +147,18 @@ int stringLen(const char *str){
 return i;
 }
 
-int centerLine(const char *str){
+int centerLine(const char *str){  //centers text on screen
     int x = stringLen(str);
     return (80-x);
 }
 
-void sleep(){
+void sleep(){ //makeshift sleep function
     for(int i = 0; i < 2000000; i ++){
     }
     return;
 }
 
-void clear(){
+void clear(){ //clears screen
     cWindow = 0;
     while (cWindow < 80*25*2) {
         //printing blank character
@@ -277,7 +278,7 @@ void kernalMain(){
     str = ".........";
     drawSlow(str);
     clear();
-    //drawBox();
+    drawBox();
     str = "Welcome to OS Lite";
     centerScreen();
     dWindow += centerLine(str);
@@ -300,9 +301,7 @@ void kernalMain(){
     sleep();
     sleep();
     clear();
-    drawBox();
-
-    dWindow +=162;
+    //drawBox();
     kprint(str);
 
     idt_init();

@@ -157,7 +157,7 @@ void clear(){
     dWindow = 0;
     stringLocation = 0;
 }
-void draw(){
+void draw(const char *str){
   // writing string to video memory
     while(str[stringLocation] != '\0') {
         //setting char in str to char at dWindow in video memory
@@ -169,7 +169,7 @@ void draw(){
     }
     stringLocation = 0;
 }
-void drawSlow(){
+void drawSlow(const char *str){
     while(str[stringLocation] != '\0') {
         sleep();
         //setting char in str to char at dWindow in video memory

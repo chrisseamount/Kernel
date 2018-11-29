@@ -1,20 +1,27 @@
 // Created by Matthew Perry, Anthony Kolendo and Chris Seamount
 // Basic Kernal that makes Kernal name on page
-#include "keyboard_map.h"
+#include "keyboard_map.h" // header holding the keyboard_map
+
+//Keyboard definitions
+//In an effort to get keyboard functionality we took code from another source, after looking around there seems to be alot of the same code passed around. 
+//Keyboard driver was taken from Arjun Sreedharan as he gave a great article on explaining what is occuring in the code.
+//Comments were added to work though understanding the driver
+// this section of defines is for creating the window size of 25 lines but 80 columns with each column containing 2 bits
 #define LINES 25
 #define COLUMNS_LINE 80
 #define BYTES_ELEMENT 2
 #define SCREENSIZE BYTES_ELEMENT * COLUMNS_LINE * LINES
-
-#define KEYBOARD_DATA_PORT 0x60
-#define KEYBOARD_STATUS_PORT 0x64
+//This is the definition section for the ports hard coded into the hardware.
+#define KEYBOARD_DATA_PORT 0x60 // is the data port and stores the keycode from the keyboard
+#define KEYBOARD_STATUS_PORT 0x64 // this is the status port and it returns a state from the interrupt table
+// definitions for the idt table for 256 in size
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
-
+// special keycodes for backspace and enter more to be defined
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0X0E
-
+//keyboard map is a table created in correlation with the keycode recived from the keyboard hardware from ports 
 extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
@@ -25,7 +32,7 @@ char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb80
 unsigned int dWindow = 0; // loop count for drawing video on screen.
 unsigned int stringLocation = 0;
 unsigned int cWindow = 0; // loop counter for clearing window/
-
+// IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
     unsigned short int offset_lowerbits;
     unsigned short int selector;
@@ -90,6 +97,7 @@ void idt_init(void)
 
     load_idt(idt_ptr);
 }
+//newline function
 void newLine(){
     unsigned int lineSize = BYTES_ELEMENT*COLUMNS_LINE;
     dWindow = dWindow + (lineSize - dWindow % (lineSize));
@@ -135,7 +143,7 @@ void keyboard_handler_main(void)
         videoPtr[dWindow++] = 0x30; //set background color
     }
 }
-
+//custom stringLen cause nothign exists
 int stringLen(const char *str){ //checks string length
         int i = 0;
     while(str[i] != '\0'){
@@ -152,7 +160,7 @@ int centerLine(const char *str){  //centers text on screen
     return (80-x);
 }
 
-void sleep(){ //makeshift sleep function
+void sleep(){ //makeshift sleep function needs some revamping
     for(int i = 0; i < 2000000; i ++){
     }
     return;
@@ -183,6 +191,9 @@ void draw(const char *str){
     }
     stringLocation = 0;
 }
+
+//a terrible slow draw but it based on how good your hardware is. as the time function is just a empty for loop.
+//the drawSlow function takes in a string and then prints it to the video memory 
 void drawSlow(const char *str){
     while(str[stringLocation] != '\0') {
         sleep();
@@ -197,7 +208,7 @@ void drawSlow(const char *str){
 }
 
 
-
+// there are 25 lines so line 13 is the middle of the screen.
 void centerScreen(){
     dWindow= 0;
     for(int i = 0; i < 12; i++){
@@ -205,20 +216,24 @@ void centerScreen(){
     }
 
 }
-void blackLineTop(){
+//black line top is part of the drawbox function made to make a cool loading screen to the os
+void borderTop(){
+    // setting the cWindow or clear window place holder to the last bit of the first line
     cWindow = 158;
+    //then counting down to 0 to have a cool wrap effect.
     while(cWindow > 0){
         sleep();
         videoPtr[cWindow] = ' ';
         videoPtr[cWindow+1] = 0x00;
         cWindow -=2;
     }
+    // writing the information to the video memory with frist bit as char second as attribute.
     videoPtr[cWindow] = ' ';
     videoPtr[cWindow+1] = 0x00;
 
 }
-
-void blackLineBottom(){
+// the border starting from the first bit of the last line and moving to the right   
+void borderBottom(){
     cWindow = (2*80*24);
      while(cWindow < (80*2*25)){
         sleep();
@@ -227,7 +242,7 @@ void blackLineBottom(){
         cWindow+=2;
     }
 }
-
+// border starting at the top and going down hitting the last bits of each line going up
 void borderLeft(){
     cWindow = 160;
     for(int i = 0; i < 23; i++){
@@ -237,7 +252,7 @@ void borderLeft(){
         cWindow+=160;
     }
 }
-
+// starting at the bottom and working its way up hitting the first bits of each line going down
 void borderRight(){
     for(int i = 0; i < 23; i++){
         sleep();
@@ -248,13 +263,14 @@ void borderRight(){
     }
 }
 
-
+//draw function to make the border around the window
 void drawBox(){
-    blackLineTop();
+    borderTop();
     borderLeft();
-    blackLineBottom();
+    borderBottom();
     borderRight();
 }
+//this is the print function to print the string we are getting from the keyboard drivers.
 void kprint(const char *str)
 {
     unsigned int i = 0;
@@ -265,9 +281,10 @@ void kprint(const char *str)
 }
 
 
-
+//our main function for kernel main
 
 void kernalMain(){
+    //int for storing string len from our string len function used to center text on screen
     unsigned int x = 0;
     const char *str = "This is the Kernal Loading up..";
     clear();
@@ -297,15 +314,16 @@ void kernalMain(){
     newLine();
     dWindow += centerLine(str);
     draw(str);
+    sleep();
     str = "";
     sleep();
     sleep();
     clear();
-    //drawBox();
-    kprint(str);
-
+    //this is the keyboard being booted up 
     idt_init();
     kb_init();
+    kprint(str);
+    //while loop so we can type away.
     while(1);
     return;
 

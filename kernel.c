@@ -3,7 +3,7 @@
 #include "keyboard_map.h" // header holding the keyboard_map
 
 //Keyboard definitions
-//In an effort to get keyboard functionality we took code from another source, after looking around there seems to be alot of the same code passed around. 
+//In an effort to get keyboard functionality we took code from another source, after looking around there seems to be alot of the same code passed around.
 //Keyboard driver was taken from Arjun Sreedharan as he gave a great article on explaining what is occuring in the code.
 //Comments were added to work though understanding the driver
 // this section of defines is for creating the window size of 25 lines but 80 columns with each column containing 2 bits
@@ -21,7 +21,7 @@
 // special keycodes for backspace and enter more to be defined
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0X0E
-//keyboard map is a table created in correlation with the keycode recived from the keyboard hardware from ports 
+//keyboard map is a table created in correlation with the keycode recived from the keyboard hardware from ports
 extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
@@ -108,7 +108,13 @@ void kb_init(void)
     /* 0xFD is 11111101 - enables only IRQ1 (keyboard)*/
     write_port(0x21 , 0xFD);
 }
-
+void moveCursor(unsigned int drawWindow){
+  unsigned short cursorLocation = (drawWindow/2);
+  write_port(0x3D4 ,14);
+  write_port(0x3D5, cursorLocation>>8);
+  write_port(0x3D4, 15);
+  write_port(0x3D5, cursorLocation);
+}
 void keyboard_handler_main(void)
 {
     unsigned char status;
@@ -116,7 +122,6 @@ void keyboard_handler_main(void)
 
     /* write EOI */
     write_port(0x20, 0x20);
-
     status = read_port(KEYBOARD_STATUS_PORT);
     /* Lowest bit of status will be set if buffer is not empty */
     if (status & 0x01) {
@@ -129,18 +134,21 @@ void keyboard_handler_main(void)
             {
               return;
             }
+
             dWindow-=2;
             videoPtr[dWindow]= ' ';
+            moveCursor(dWindow);
+
             return;
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
             newLine();
+            moveCursor(dWindow);
             return;
         }
-
-
         videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen
         videoPtr[dWindow++] = 0x30; //set background color
+        moveCursor(dWindow);
     }
 }
 //custom stringLen cause nothign exists
@@ -149,7 +157,7 @@ int stringLen(const char *str){ //checks string length
     while(str[i] != '\0'){
         i++;
     }
-    //fixing the 2 bit size requirement for not crazy things happening with the video pointer
+    //fixing the 2 bit size requirement for not crazy things happening with the video pointer co
     if(i%2 == 1){
        i++;
     }
@@ -159,6 +167,7 @@ return i;
 int centerLine(const char *str){  //centers text on screen
     int x = stringLen(str);
     return (80-x);
+    moveCursor(dWindow);
 }
 
 void sleep(){ //makeshift sleep function needs some revamping
@@ -194,7 +203,7 @@ void draw(const char *str){
 }
 
 //a terrible slow draw but it based on how good your hardware is. as the time function is just a empty for loop.
-//the drawSlow function takes in a string and then prints it to the video memory 
+//the drawSlow function takes in a string and then prints it to the video memory
 void drawSlow(const char *str){
     while(str[stringLocation] != '\0') {
         sleep();
@@ -233,7 +242,7 @@ void borderTop(){
     videoPtr[cWindow+1] = 0x00;
 
 }
-// the border starting from the first bit of the last line and moving to the right   
+// the border starting from the first bit of the last line and moving to the right
 void borderBottom(){
     cWindow = (2*80*24);
      while(cWindow < (80*2*25)){
@@ -275,16 +284,21 @@ void drawBox(){
 void kprint(const char *str)
 {
     unsigned int i = 0;
-    while (str[i] != '\0') {
+    while (str[i] != '\0' || str[i]) {
         videoPtr[dWindow++] = str[i++];
         videoPtr[dWindow++] = 0x30;
+
     }
+
 }
 
 
 //our main function for kernel main
 
 void kernalMain(){
+    idt_init();
+    kb_init();
+    moveCursor(5000000);
     //int for storing string len from our string len function used to center text on screen
     unsigned int x = 0;
     const char *str = "This is the Kernal Loading up..";
@@ -320,9 +334,8 @@ void kernalMain(){
     sleep();
     sleep();
     clear();
-    //this is the keyboard being booted up 
-    idt_init();
-    kb_init();
+    moveCursor(0);
+    //this is the keyboard being booted up
     kprint(str);
     //while loop so we can type away.
     while(1);

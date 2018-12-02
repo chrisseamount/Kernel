@@ -1,5 +1,8 @@
 #include "kernelFunctions.h"
-
+char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
+unsigned int dWindow = 0; // loop count for drawing video on screen.
+unsigned int stringLocation = 0;
+unsigned int cWindow = 0; // loop counter for clearing window/
 
 
 //custom stringLen cause nothign exists
@@ -19,6 +22,11 @@ int centerLine(const char *str){  //centers text on screen
     int x = stringLen(str);
     return (80-x);
 }
+void newLine1(){
+    unsigned int lineSize =2*80;
+    dWindow = dWindow + (lineSize - dWindow % (lineSize));
+}
+
 
 void sleep(){ //makeshift sleep function needs some revamping
     for(int i = 0; i < 2000000; i ++){
@@ -71,7 +79,7 @@ void drawSlow(const char *str){
 void centerScreen(){
     dWindow= 0;
     for(int i = 0; i < 12; i++){
-        newLine();
+        newLine1();
     }
 
 }

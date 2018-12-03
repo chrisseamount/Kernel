@@ -44,9 +44,5 @@ start:
     hlt ;; halt the CPU only awakes on interrupts and interrupts are blocked.
 
 section .bss
-<<<<<<< HEAD
-resb 0x4000 ;; creaking 8kb space for the stack
-=======
-resb 8192 ;; creating 8kb space for the stack
->>>>>>> c033e2568933a50a46789d2be34ea094af7988de
 stack_space:
+resb 0x40000 ;; creaking 8kb space for the stack

@@ -147,6 +147,21 @@ void keyboard_handler_main(void)
             return;
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
+            if(buffer[0] == 'e'){
+              if(buffer[1] == 'x'){
+                if(buffer[2] == 'i'){
+                  if(buffer[3] == 't'){
+                    if(buffer[4] == '\0'){
+                      const char* str = "Good Bye!";
+                      newLine();
+                      kprint(str);
+                      flushBuffer();
+                      return;
+                    }
+                  }
+                }
+              }
+            }
             newLine();
             kprint(buffer);
             flushBuffer();
@@ -230,7 +245,10 @@ void kernelMain(){
     //this is the keyboard being booted up
     //kprint(str);
     //while loop so we can type away.
-    while(1);
+    while(1){
+
+
+    };
     return;
 
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 //created by Brandon Friesen
 //from http://www.osdever.net/bkerndev/Docs/keyboard.htm
 unsigned char keyboard_map[128] =

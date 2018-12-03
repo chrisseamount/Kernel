@@ -142,8 +142,9 @@ void keyboard_handler_main(void)
           hang=0;
           return;
         }
+
         if(keycode == BACKSPACE_KEY_CODE){  //checks for backspace key and replaces text on screen with a space
-            if(dWindow == 0)  //if at top left corner dont do anything
+            if(buffer[0]=='\0')  //if at top left corner dont do anything
             {
               return;
             }
@@ -180,6 +181,11 @@ void keyboard_handler_main(void)
             videoPtr[dWindow++] = 0x30; //set background color
             moveCursor(dWindow);
             return;
+        }
+        if(buffer[77]!='\0')
+        {
+          moveCursor(dWindow-2);
+          return;
         }
         buffer[((dWindow%160)/2)-1] = keyboard_map[(unsigned char) keycode];
         videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen

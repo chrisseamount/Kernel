@@ -1,7 +1,7 @@
 // Created by Matthew Perry, Anthony Kolendo and Chris Seamount
 // Basic Kernal that makes Kernal name on page
 #include "keyboard_map.h" // header holding the keyboard_map
-#include "kernelFunctions.h" //header holding the basic kernel functions
+#include "kernelFunctions.h"
 //Keyboard definitions
 //In an effort to get keyboard functionality we took code from another source, after looking around there seems to be alot of the same code passed around.
 //Keyboard driver was taken from Arjun Sreedharan as he gave a great article on explaining what is occuring in the code.
@@ -27,10 +27,15 @@ extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
-
+void flushBuffer();
+void kprint();
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int dWindow = 0; // loop count for drawing video on screen.
 unsigned int stringLocation = 0;
+unsigned int cWindow = 0; // loop counter for clearing window/
+
+unsigned char buffer[79];
+
 // IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -106,8 +111,15 @@ void kb_init(void)
 {
     /* 0xFD is 11111101 - enables only IRQ1 (keyboard)*/
     write_port(0x21 , 0xFD);
+    write_port(0xA1 , 0xEF);
 }
-
+void moveCursor(unsigned int drawWindow){
+  unsigned short cursorLocation = (drawWindow/2);
+  write_port(0x3D4 ,14);
+  write_port(0x3D5, cursorLocation>>8);
+  write_port(0x3D4, 15);
+  write_port(0x3D5, cursorLocation);
+}
 void keyboard_handler_main(void)
 {
     unsigned char status;
@@ -115,7 +127,6 @@ void keyboard_handler_main(void)
 
     /* write EOI */
     write_port(0x20, 0x20);
-
     status = read_port(KEYBOARD_STATUS_PORT);
     /* Lowest bit of status will be set if buffer is not empty */
     if (status & 0x01) {
@@ -129,34 +140,55 @@ void keyboard_handler_main(void)
               return;
             }
             dWindow-=2;
+            buffer[((dWindow%160)/2)-1] = '\0';
             videoPtr[dWindow]= ' ';
+            moveCursor(dWindow);
+
             return;
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
             newLine();
+            kprint(buffer);
+            flushBuffer();
+            newLine();
+            videoPtr[dWindow++] = '>';  //write text to screen
+            videoPtr[dWindow++] = 0x30; //set background color
+            moveCursor(dWindow);
             return;
         }
-
-
+        buffer[((dWindow%160)/2)-1] = keyboard_map[(unsigned char) keycode];
         videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen
         videoPtr[dWindow++] = 0x30; //set background color
+        moveCursor(dWindow);
     }
 }
 
-//this is the print function to print the string we are getting from the keyboard drivers.
+//keyboardDrawFunction
 void kprint(const char *str)
 {
     unsigned int i = 0;
-    while (str[i] != '\0') {
+    while (str[i] != '\0' || str[i]) {
         videoPtr[dWindow++] = str[i++];
         videoPtr[dWindow++] = 0x30;
+
     }
+
 }
 
-
+void flushBuffer()
+{
+  int i = 0;
+  while(buffer[i] != '\0')
+  {
+    buffer[i] = '\0';
+    i++;
+  }
+}
 //our main function for kernel main
 
 void kernelMain(){
+    moveCursor(5000000);
+    flushBuffer();
     //int for storing string len from our string len function used to center text on screen
     unsigned int x = 0;
     const char *str = "This is the Kernal Loading up..";
@@ -190,9 +222,13 @@ void kernelMain(){
     sleep();
     clear(videoPtr);
     dWindow = 0;
-    //this is the keyboard being booted up
+    moveCursor(2);
     idt_init();
     kb_init();
+    videoPtr[dWindow++] = '>';  //write text to screen
+    videoPtr[dWindow++] = 0x30; //set background color
+    //this is the keyboard being booted up
+    //kprint(str);
     //while loop so we can type away.
     while(1);
     return;

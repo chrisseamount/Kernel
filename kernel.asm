@@ -13,13 +13,12 @@ global read_port
 global write_port
 global load_idt
 
-extern kernelMain  ;; kernamlMain is our main function defined in the c file
+extern kernelMain  ;; kernelMain is our main function defined in the c file
 extern keyboard_handler_main
 
 read_port:
-	mov edx, [esp + 4]
-			;al is the lower 8 bits of eax
-	in al, dx	;dx is the lower 16 bits of edx
+	mov edx, [esp + 4] ;al is the lower 8 bits of eax
+	in al, dx	         ;dx is the lower 16 bits of edx
 	ret
 
 write_port:
@@ -30,20 +29,20 @@ write_port:
 
 load_idt:
 	mov edx, [esp + 4]
-	lidt [edx]
-	sti 				;turn on interrupts
+	lidt [edx] ;;load global interrupts
+	sti 				;turn on interrupts flags
 	ret
 
 keyboard_handler:
 	call    keyboard_handler_main
-	iretd
+	iretd ;;allows returns from our c program.
 
 start:
     cli ;; clear all interrupts
-    mov esp, stack_space ;; setting the stack pointer addresss
-    call kernelMain ;;calling the kernalMain function
+    mov esp, stack_space ;; setting the stack pointer address
+    call kernelMain ;;calling the kernelMain function
     hlt ;; halt the CPU only awakes on interrupts and interrupts are blocked.
 
 section .bss
-resb 8192 ;; creaking 8kb space for the stack
+resb 0x4000 ;; creaking 8kb space for the stack
 stack_space:

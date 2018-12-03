@@ -109,7 +109,7 @@ void kb_init(void)
     write_port(0x21 , 0xFD);
 }
 void moveCursor(unsigned int drawWindow){
-  unsigned short cursorLocation = (drawWindow/2);
+  cursorLocation = (drawWindow/2);
   write_port(0x3D4 ,14);
   write_port(0x3D5, cursorLocation>>8);
   write_port(0x3D4, 15);

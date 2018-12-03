@@ -31,7 +31,6 @@ extern void load_idt(unsigned long *idt_ptr);
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int dWindow = 0; // loop count for drawing video on screen.
 unsigned int stringLocation = 0;
-unsigned int cWindow = 0; // loop counter for clearing window/
 // IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -157,46 +156,43 @@ void kprint(const char *str)
 
 //our main function for kernel main
 
-void kernalMain(){
+void kernelMain(){
     //int for storing string len from our string len function used to center text on screen
     unsigned int x = 0;
     const char *str = "This is the Kernal Loading up..";
-    clear();
-    centerScreen();
-    x = centerLine(str);
-    dWindow += x;
-    drawSlow(str);
-    str = ".........";
-    drawSlow(str);
-    clear();
-    drawBox();
+    clear(videoPtr);
+    dWindow = 0;
+    dWindow = (80*2*13)+60;
+    drawSlow(str,dWindow,videoPtr,stringLocation);
+    str = "....................................";
+    drawSlow(str,dWindow,videoPtr,stringLocation);
+    clear(videoPtr);
+    dWindow = 0;
+    drawBox(videoPtr);
     str = "Welcome to OS Lite";
-    centerScreen();
-    dWindow += centerLine(str);
-    drawSlow(str);
+    dWindow += (160*13);
+    dWindow += 60;
+    drawSlow(str,dWindow,videoPtr,stringLocation);
     str = "Home";
-    newLine();
-    dWindow += centerLine(str);
-    draw(str);
+    dWindow+= 160;
+    draw(str,dWindow,videoPtr,stringLocation);
     str = "Help";
-    newLine();
-    dWindow += centerLine(str);
-    draw(str);
+    dWindow+=160;
+    draw(str,dWindow,videoPtr,stringLocation);
     str = "Created by Matt Chris and Anthony";
-    newLine();
-    newLine();
-    newLine();
-    dWindow += centerLine(str);
-    draw(str);
+    dWindow+= 160;
+    draw(str,dWindow,videoPtr,stringLocation);
+    sleep();
+    sleep();
     sleep();
     str = "";
     sleep();
     sleep();
-    clear();
+    clear(videoPtr);
+    dWindow = 0;
     //this is the keyboard being booted up
     idt_init();
     kb_init();
-    kprint(str);
     //while loop so we can type away.
     while(1);
     return;

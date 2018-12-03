@@ -1,4 +1,4 @@
-;;kernal.asm
+;;kernel.asm
 ;;made by Matt Perry
 bits 32 ;;setting mode to 32 bit
 section .text ;;start of the command list
@@ -13,7 +13,7 @@ global read_port
 global write_port
 global load_idt
 
-extern kernalMain  ;; kernamlMain is our main function defined in the c file
+extern kernelMain  ;; kernamlMain is our main function defined in the c file
 extern keyboard_handler_main
 
 read_port:
@@ -23,9 +23,9 @@ read_port:
 	ret
 
 write_port:
-	mov   edx, [esp + 4]    
-	mov   al, [esp + 4 + 4]  
-	out   dx, al  
+	mov   edx, [esp + 4]
+	mov   al, [esp + 4 + 4]
+	out   dx, al
 	ret
 
 load_idt:
@@ -34,16 +34,16 @@ load_idt:
 	sti 				;turn on interrupts
 	ret
 
-keyboard_handler:                 
+keyboard_handler:
 	call    keyboard_handler_main
 	iretd
 
 start:
     cli ;; clear all interrupts
     mov esp, stack_space ;; setting the stack pointer addresss
-    call kernalMain ;;calling the kernalMain function
+    call kernelMain ;;calling the kernalMain function
     hlt ;; halt the CPU only awakes on interrupts and interrupts are blocked.
 
 section .bss
 resb 8192 ;; creaking 8kb space for the stack
-stack_space:  
+stack_space:

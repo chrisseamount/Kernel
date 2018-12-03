@@ -35,6 +35,8 @@ unsigned int stringLocation = 0;
 unsigned int cWindow = 0; // loop counter for clearing window/
 
 unsigned char buffer[79];
+int hang = 1;
+int exitKernel = 0;
 
 // IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
@@ -130,9 +132,15 @@ void keyboard_handler_main(void)
     status = read_port(KEYBOARD_STATUS_PORT);
     /* Lowest bit of status will be set if buffer is not empty */
     if (status & 0x01) {
+
         keycode = read_port(KEYBOARD_DATA_PORT);
+
         if(keycode < 0){
             return;
+        }
+        if(hang==1){
+          hang=0;
+          return;
         }
         if(keycode == BACKSPACE_KEY_CODE){  //checks for backspace key and replaces text on screen with a space
             if(dWindow == 0)  //if at top left corner dont do anything
@@ -156,6 +164,8 @@ void keyboard_handler_main(void)
                       newLine();
                       kprint(str);
                       flushBuffer();
+                      exitKernel = 1;
+                      moveCursor(50000);
                       return;
                     }
                   }
@@ -220,35 +230,28 @@ void kernelMain(){
     dWindow += (160*13);
     dWindow += 60;
     drawSlow(str,dWindow,videoPtr,stringLocation);
-    str = "Home";
+    str = "";
     dWindow+= 160;
     draw(str,dWindow,videoPtr,stringLocation);
-    str = "Help";
+    str = "";
     dWindow+=160;
     draw(str,dWindow,videoPtr,stringLocation);
     str = "Created by Matt Chris and Anthony";
     dWindow+= 160;
     draw(str,dWindow,videoPtr,stringLocation);
-    sleep();
-    sleep();
-    sleep();
+    idt_init();
+    kb_init();
+    while(hang==1);
     str = "";
-    sleep();
-    sleep();
     clear(videoPtr);
     dWindow = 0;
     moveCursor(2);
-    idt_init();
-    kb_init();
     videoPtr[dWindow++] = '>';  //write text to screen
     videoPtr[dWindow++] = 0x30; //set background color
     //this is the keyboard being booted up
     //kprint(str);
     //while loop so we can type away.
-    while(1){
-
-
-    };
+    while(exitKernel==0);
     return;
 
 }

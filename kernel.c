@@ -113,7 +113,6 @@ void kb_init(void)
 {
     /* 0xFD is 11111101 - enables only IRQ1 (keyboard)*/
     write_port(0x21 , 0xFD);
-    write_port(0xA1 , 0xEF);
 }
 void moveCursor(unsigned int drawWindow){
   unsigned short cursorLocation = (drawWindow/2);

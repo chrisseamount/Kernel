@@ -29,12 +29,18 @@ extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
 void flushBuffer();
 void kprint();
+void storeString();
+int checkString(const char* string);
+
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int dWindow = 0; // loop count for drawing video on screen.
 unsigned int stringLocation = 0;
 unsigned int cWindow = 0; // loop counter for clearing window/
 
 unsigned char buffer[79];
+unsigned char userString[79];
+unsigned char exitString[] = {"exit",'\0'};
+
 int hang = 1;
 int exitKernel = 0;
 
@@ -155,22 +161,15 @@ void keyboard_handler_main(void)
             return;
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
-            if(buffer[0] == 'e'){
-              if(buffer[1] == 'x'){
-                if(buffer[2] == 'i'){
-                  if(buffer[3] == 't'){
-                    if(buffer[4] == '\0'){
-                      const char* str = "Good Bye!";
-                      newLine();
-                      kprint(str);
-                      flushBuffer();
-                      exitKernel = 1;
-                      moveCursor(50000);
-                      return;
-                    }
-                  }
-                }
-              }
+            storeString();
+            if(checkString(exitString)){
+              const char* str = "Good Bye!";
+              newLine();
+              kprint(str);
+              flushBuffer();
+              exitKernel = 1;
+              moveCursor(50000);
+              return;
             }
             newLine();
             kprint(buffer);
@@ -205,6 +204,25 @@ void kprint(const char *str)
 
 }
 
+void storeString(){
+  for(int i = 0; i<stringLen(buffer);i++){
+    userString[i] = buffer[i];
+  }
+  return;
+}
+
+int checkString(const char* string){
+  for(int i = 0; i < stringLen(string);i++){
+    if(string[i]!=userString[i]){
+      return 0;
+    }
+    if(string[i]=='\0'){
+      return 1;
+    }
+  }
+  return 1;
+}
+
 void flushBuffer()
 {
   int i = 0;
@@ -219,8 +237,6 @@ void flushBuffer()
 void kernelMain(){
     moveCursor(5000000);
     flushBuffer();
-    //int for storing string len from our string len function used to center text on screen
-    unsigned int x = 0;
     const char *str = "This is the Kernal Loading up..";
     clear(videoPtr);
     dWindow = 0;
@@ -235,13 +251,13 @@ void kernelMain(){
     dWindow += (160*13);
     dWindow += 60;
     drawSlow(str,dWindow,videoPtr,stringLocation);
-    str = "";
-    dWindow+= 160;
+    str = "Created by Matt Chris and Anthony";
+    dWindow+= 320;
     draw(str,dWindow,videoPtr,stringLocation);
     str = "";
     dWindow+=160;
     draw(str,dWindow,videoPtr,stringLocation);
-    str = "Created by Matt Chris and Anthony";
+    str = "Press 'Enter' To Continue";
     dWindow+= 160;
     draw(str,dWindow,videoPtr,stringLocation);
     idt_init();

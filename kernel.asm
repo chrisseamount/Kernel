@@ -43,6 +43,6 @@ start:
     call kernelMain ;;calling the kernelMain function
     hlt ;; halt the CPU only awakes on interrupts and interrupts are blocked.
 
-section .bss
-stack_space:
-resb 0x40000 ;; creaking 8kb space for the stack
+    section .bss
+    resb 8192 ;; creaking 8kb space for the stack
+    stack_space:  

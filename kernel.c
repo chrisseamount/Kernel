@@ -39,7 +39,7 @@ unsigned int cWindow = 0; // loop counter for clearing window/
 
 unsigned char buffer[79];
 unsigned char userString[79];
-unsigned char exitString[] = {"exit",'\0'};
+unsigned char exitString[] = "exit";
 
 int hang = 1;
 int exitKernel = 0;

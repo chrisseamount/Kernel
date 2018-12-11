@@ -171,12 +171,11 @@ void keyboard_handler_main(void)
               moveCursor(50000);
               return;
             }
-            newLine();
-            kprint(buffer);
+
             flushBuffer();
             newLine();
             videoPtr[dWindow++] = '>';  //write text to screen
-            videoPtr[dWindow++] = 0x15; //set background color
+            videoPtr[dWindow++] = 0x30; //set background color
             moveCursor(dWindow);
             return;
         }
@@ -187,7 +186,7 @@ void keyboard_handler_main(void)
         }
         buffer[((dWindow%160)/2)-1] = keyboard_map[(unsigned char) keycode];
         videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen
-        videoPtr[dWindow++] = 0x15; //set background color
+        videoPtr[dWindow++] = 0x30; //set background color
         moveCursor(dWindow);
     }
 }
@@ -198,7 +197,7 @@ void kprint(const char *str)
     unsigned int i = 0;
     while (str[i] != '\0' || str[i]) {
         videoPtr[dWindow++] = str[i++];
-        videoPtr[dWindow++] = 0x15;
+        videoPtr[dWindow++] = 0x30;
 
     }
 
@@ -270,7 +269,7 @@ void kernelMain(){
     dWindow = 0;
     moveCursor(2);
     videoPtr[dWindow++] = '>';  //write text to screen
-    videoPtr[dWindow++] = 0x15; //set background color
+    videoPtr[dWindow++] = 0x30; //set background color
     //this is the keyboard being booted up
     //kprint(str);
     //while loop so we can type away.

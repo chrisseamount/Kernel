@@ -21,8 +21,12 @@
 // special keycodes for backspace and enter more to be defined
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0X0E
+#define SHIFT_KEY_CODE 0x2A
+#define CAPS_KEY_CODE 0x3A
 //keyboard map is a table created in correlation with the keycode recived from the keyboard hardware from ports
 extern unsigned char keyboard_map[128];
+extern unsigned char shift_keyboard_map[128];
+extern unsigned char caps_keyboard_map[128];
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
@@ -43,6 +47,7 @@ unsigned char exitString[] = "exit";
 
 int hang = 1;
 int exitKernel = 0;
+int caps = 0;
 
 // IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
@@ -179,15 +184,49 @@ void keyboard_handler_main(void)
             moveCursor(dWindow);
             return;
         }
+
+        if(keycode == CAPS_KEY_CODE){
+          if(caps == 0)
+          {
+            caps = 1;
+            return;
+          }
+          caps = 0;
+          return;
+        }
+
+
         if(buffer[77]!='\0')
         {
           moveCursor(dWindow-2);
           return;
         }
-        buffer[((dWindow%160)/2)-1] = keyboard_map[(unsigned char) keycode];
-        videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen
-        videoPtr[dWindow++] = 0x30; //set background color
-        moveCursor(dWindow);
+        switch (caps) {
+          case 0:
+            buffer[((dWindow%160)/2)-1] = keyboard_map[(unsigned char) keycode];
+            videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen
+            videoPtr[dWindow++] = 0x30; //set background color
+            moveCursor(dWindow);
+            return;
+          case 1:
+            buffer[((dWindow%160)/2)-1] = caps_keyboard_map[(unsigned char) keycode];
+            videoPtr[dWindow++] = caps_keyboard_map[(unsigned char) keycode];  //write text to screen
+            videoPtr[dWindow++] = 0x30; //set background color
+            moveCursor(dWindow);
+            return;
+          case 3:
+            buffer[((dWindow%160)/2)-1] = shift_keyboard_map[(unsigned char) keycode];
+            videoPtr[dWindow++] = shift_keyboard_map[(unsigned char) keycode];  //write text to screen
+            videoPtr[dWindow++] = 0x30; //set background color
+            moveCursor(dWindow);
+            return;
+          default:
+            buffer[((dWindow%160)/2)-1] = keyboard_map[(unsigned char) keycode];
+            videoPtr[dWindow++] = keyboard_map[(unsigned char) keycode];  //write text to screen
+            videoPtr[dWindow++] = 0x30; //set background color
+            moveCursor(dWindow);
+            return;
+        }
     }
 }
 

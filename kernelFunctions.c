@@ -26,7 +26,7 @@ void clear(char *videoPtr1){ //clears screen
         //printing blank character
         videoPtr1[dWindow1] = ' ';
         //setting the attribute-byte - green on black screen
-        videoPtr1[dWindow1+1] = 0x30;
+        videoPtr1[dWindow1+1] = 0x15;
         dWindow1 += 2;
     }
 }
@@ -36,7 +36,7 @@ void draw(const char *str,unsigned int dWindow1,char *videoPtr1,unsigned int str
         //setting char in str to char at dWindow in video memory
         videoPtr1[dWindow1] = str[stringLocation1];
         //setting attiribute-byte -green on black screen
-        videoPtr1[dWindow1+1] = 0x30;
+        videoPtr1[dWindow1+1] = 0x15;
         ++stringLocation1;
         dWindow1 += 2;
     }
@@ -51,7 +51,7 @@ void drawSlow(const char *str,unsigned int dWindow1,char *videoPtr1,unsigned int
         //setting char in str to char at dWindow in video memory
         videoPtr1[dWindow1] = str[stringLocation1];
         //setting attiribute-byte -green on black screen
-        videoPtr1[dWindow1+1] = 0x30;
+        videoPtr1[dWindow1+1] = 0x15;
         ++stringLocation1;
         dWindow1 += 2;
     }

@@ -53,8 +53,8 @@ unsigned char shift_keyboard_map[128] =
   'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n',	/* Enter key */
     0,			/* 29   - Control */
   'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':',	/* 39 */
- '|', '~',   0,		/* Left shift */
- '\\', 'Z', 'X', 'C', 'V', 'B', 'N',			/* 49 */
+ '\"', '~',   0,		/* Left shift */
+ '|', 'Z', 'X', 'C', 'V', 'B', 'N',			/* 49 */
   'M', '<', '>', '?',   0,				/* Right shift */
   '*',
     0,	/* Alt */

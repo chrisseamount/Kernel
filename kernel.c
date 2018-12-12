@@ -31,10 +31,11 @@ extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
-void flushBuffer();
+void flushString(char* string);
 void kprint();
 void storeString();
 int checkString(const char* string);
+int printCheck();
 
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int dWindow = 0; // loop count for drawing video on screen.
@@ -44,6 +45,9 @@ unsigned int cWindow = 0; // loop counter for clearing window/
 unsigned char buffer[79];
 unsigned char userString[79];
 unsigned char exitString[] = "exit";
+unsigned char clearString[] = "clear";
+unsigned char printString[] = "print(";
+unsigned char stringtoPrint[79];
 
 int hang = 1;
 int exitKernel = 0;
@@ -170,17 +174,38 @@ void keyboard_handler_main(void)
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
             storeString();
+            flushString(stringtoPrint);
             if(checkString(exitString)){
               const char* str = "Good Bye!";
               newLine();
               kprint(str);
-              flushBuffer();
+              flushString(buffer);
               exitKernel = 1;
               moveCursor(50000);
               return;
             }
+            if(checkString(clearString)){
+              flushString(buffer);
+              clear(videoPtr);
+              dWindow = 0;
+              videoPtr[dWindow++] = '>';  //write text to screen
+              videoPtr[dWindow++] = 0x30; //set background color
+              moveCursor(dWindow);
+              return;
+            }
+            if(printCheck()){
+              newLine();
+              kprint(stringtoPrint);
+              newLine();
+              flushString(buffer);
+              flushString(stringtoPrint);
+              videoPtr[dWindow++] = '>';  //write text to screen
+              videoPtr[dWindow++] = 0x30; //set background color
+              moveCursor(dWindow);
+              return;
+            }
 
-            flushBuffer();
+            flushString(buffer);
             newLine();
             videoPtr[dWindow++] = '>';  //write text to screen
             videoPtr[dWindow++] = 0x30; //set background color
@@ -255,6 +280,36 @@ void kprint(const char *str)
 
 }
 
+int printCheck(){
+  int i = 0;
+  while(printString[i]!='\0'){
+    if(userString[i]!=printString[i]){
+      return 0;
+    }
+    if(userString[i]=='('&& printString[i]=='('){
+      i++;
+      break;
+    }
+    else if(userString[i]!='('&& printString[i]=='('){
+      return 0;
+    }
+    i++;
+  }
+  int x = 0;
+  while(userString[i]!=')'){
+    if(userString[i] == '\0'){
+      return 0;
+    }
+    stringtoPrint[x] = userString[i];
+    x++;
+    i++;
+  }
+  if(userString[i+1]=='\0'){
+    return 1;
+  }
+  return 0;
+}
+
 void storeString(){
   for(int i = 0; i<79;i++){
     userString[i] = buffer[i];
@@ -276,12 +331,12 @@ int checkString(const char* string){
   return 1;
 }
 
-void flushBuffer()
+void flushString(char* string)
 {
   int i = 0;
-  while(buffer[i] != '\0')
+  while(string[i] != '\0')
   {
-    buffer[i] = '\0';
+    string[i] = '\0';
     i++;
   }
 }
@@ -289,7 +344,7 @@ void flushBuffer()
 
 void kernelMain(){
     moveCursor(5000000);
-    flushBuffer();
+    flushString(buffer);
     const char *str = "This is the Kernal Loading up..";
     clear(videoPtr);
     dWindow = 0;

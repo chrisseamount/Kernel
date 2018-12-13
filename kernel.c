@@ -12,45 +12,45 @@
 #define BYTES_ELEMENT 2
 #define SCREENSIZE BYTES_ELEMENT * COLUMNS_LINE * LINES
 //This is the definition section for the ports hard coded into the hardware.
-#define KEYBOARD_DATA_PORT 0x60 // is the data port and stores the keycode from the keyboard
+#define KEYBOARD_DATA_PORT 0x60 // is the data port and stores the key code from the keyboard
 #define KEYBOARD_STATUS_PORT 0x64 // this is the status port and it returns a state from the interrupt table
 // definitions for the idt table for 256 in size
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
-// special keycodes for backspace and enter more to be defined
+// special key codes for backspace and enter more to be defined
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0X0E
 #define SHIFT_KEY_CODE 0x2A
 #define CAPS_KEY_CODE 0x3A
 
+//things from assembly
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
-
+// forward deceleration for functions defined in this file.
 void flushString(char* string);
 void kprint();
 void storeString();
 int checkString(const char* string);
 int printCheck();
-
+//defining some variables that stay const
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int windowPos = 0; // loop count for drawing video on screen.
 unsigned int stringLocation = 0;
 unsigned int cWindow = 0; // loop counter for clearing window/
+unsigned char buffer[79]; // array for handling the input from users
+unsigned char userString[79]; // array fro holding the users information
+unsigned char exitString[] = "exit"; // exit command
+unsigned char clearString[] = "clear"; // clear command
+unsigned char printString[] = "print("; // print command
+unsigned char stringtoPrint[79]; // string that is to be printed
 
-unsigned char buffer[79];
-unsigned char userString[79];
-unsigned char exitString[] = "exit";
-unsigned char clearString[] = "clear";
-unsigned char printString[] = "print(";
-unsigned char stringtoPrint[79];
-
-int hang = 1;
-int exitKernel = 0;
-int caps = 0;
-int storeCaps;
+int hang = 1; // a hang for waiting on input
+int exitKernel = 0; // an exit controller
+int caps = 0; // caps controller
+int storeCaps; // it stores capts
 
 // IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
@@ -122,19 +122,26 @@ void newLine(){
     unsigned int lineSize = BYTES_ELEMENT*COLUMNS_LINE;
     windowPos = windowPos + (lineSize - windowPos % (lineSize));
 }
-
+//starting up the keyboard
 void kb_init(void)
 {
-    /* 0xFD is 11111101 - enables only IRQ1 (keyboard)*/
+    //this sets the mask
     write_port(0x21 , 0xFD);
 }
+//move cursor function that takes the current draw window position and writes to the ports of the vga move cursor
 void moveCursor(unsigned int drawWindow){
   unsigned short cursorLocation = (drawWindow/2);
+  //sending in the interrupt 14 to the cursor position to inform of low bits
   write_port(0x3D4 ,14);
+  // taking the low bits for location
   write_port(0x3D5, cursorLocation>>8);
+  //sending the interrupt 15 to inform
   write_port(0x3D4, 15);
+  //passing high bits
   write_port(0x3D5, cursorLocation);
 }
+
+// definition of all the keyboard actions that occur when a key is pressed
 void keyboard_handler_main(void)
 {
     unsigned char status;
@@ -237,6 +244,7 @@ void keyboard_handler_main(void)
           moveCursor(windowPos-2);
           return;
         }
+        //switch case for handling upercase
         switch (caps) {
           case 0:
             buffer[((windowPos%160)/2)-1] = keyboard_map[keycode];
@@ -277,7 +285,7 @@ void kprint(const char *str)
     }
 
 }
-
+//checking if print was called
 int printCheck(){
   int i = 0;
   while(printString[i]!='\0'){
@@ -307,14 +315,14 @@ int printCheck(){
   }
   return 0;
 }
-
+//memory storage of a string from the buffer
 void storeString(){
   for(int i = 0; i<79;i++){
     userString[i] = buffer[i];
   }
   return;
 }
-
+// comparison of strings
 int checkString(const char* string){
   int i = 0;
   while(userString[i]!='\0'){
@@ -328,7 +336,7 @@ int checkString(const char* string){
   }
   return 1;
 }
-
+//cleaning the char* passed in for and empty container
 void flushString(char* string)
 {
   int i = 0;
@@ -366,7 +374,9 @@ void kernelMain(){
     str = "Press 'Enter' To Continue";
     windowPos+= 160;
     draw(str,windowPos,videoPtr,stringLocation);
+    //starting the interrupt
     idt_init();
+    //starting the keyboard
     kb_init();
     while(hang==1);
     str = "";
@@ -375,8 +385,6 @@ void kernelMain(){
     moveCursor(2);
     videoPtr[windowPos++] = '>';  //write text to screen
     videoPtr[windowPos++] = 0x30; //set background color
-    //this is the keyboard being booted up
-    //kprint(str);
     //while loop so we can type away.
     while(exitKernel==0);
     return;

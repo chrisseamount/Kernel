@@ -23,14 +23,12 @@
 #define BACKSPACE_KEY_CODE 0X0E
 #define SHIFT_KEY_CODE 0x2A
 #define CAPS_KEY_CODE 0x3A
-//keyboard map is a table created in correlation with the keycode recived from the keyboard hardware from ports
-extern unsigned char keyboard_map[128];
-extern unsigned char shift_keyboard_map[128];
-extern unsigned char caps_keyboard_map[128];
+
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
+
 void flushString(char* string);
 void kprint();
 void storeString();
@@ -38,7 +36,7 @@ int checkString(const char* string);
 int printCheck();
 
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
-unsigned int dWindow = 0; // loop count for drawing video on screen.
+unsigned int windowPos = 0; // loop count for drawing video on screen.
 unsigned int stringLocation = 0;
 unsigned int cWindow = 0; // loop counter for clearing window/
 
@@ -122,7 +120,7 @@ void idt_init(void)
 //newline function
 void newLine(){
     unsigned int lineSize = BYTES_ELEMENT*COLUMNS_LINE;
-    dWindow = dWindow + (lineSize - dWindow % (lineSize));
+    windowPos = windowPos + (lineSize - windowPos % (lineSize));
 }
 
 void kb_init(void)
@@ -165,10 +163,10 @@ void keyboard_handler_main(void)
             {
               return;
             }
-            dWindow-=2;
-            buffer[((dWindow%160)/2)-1] = '\0';
-            videoPtr[dWindow]= ' ';
-            moveCursor(dWindow);
+            windowPos-=2;
+            buffer[((windowPos%160)/2)-1] = '\0';
+            videoPtr[windowPos]= ' ';
+            moveCursor(windowPos);
 
             return;
         }
@@ -187,10 +185,10 @@ void keyboard_handler_main(void)
             if(checkString(clearString)){
               flushString(buffer);
               clear(videoPtr);
-              dWindow = 0;
-              videoPtr[dWindow++] = '>';  //write text to screen
-              videoPtr[dWindow++] = 0x30; //set background color
-              moveCursor(dWindow);
+              windowPos = 0;
+              videoPtr[windowPos++] = '>';  //write text to screen
+              videoPtr[windowPos++] = 0x30; //set background color
+              moveCursor(windowPos);
               return;
             }
             if(printCheck()){
@@ -199,17 +197,17 @@ void keyboard_handler_main(void)
               newLine();
               flushString(buffer);
               flushString(stringtoPrint);
-              videoPtr[dWindow++] = '>';  //write text to screen
-              videoPtr[dWindow++] = 0x30; //set background color
-              moveCursor(dWindow);
+              videoPtr[windowPos++] = '>';  //write text to screen
+              videoPtr[windowPos++] = 0x30; //set background color
+              moveCursor(windowPos);
               return;
             }
 
             flushString(buffer);
             newLine();
-            videoPtr[dWindow++] = '>';  //write text to screen
-            videoPtr[dWindow++] = 0x30; //set background color
-            moveCursor(dWindow);
+            videoPtr[windowPos++] = '>';  //write text to screen
+            videoPtr[windowPos++] = 0x30; //set background color
+            moveCursor(windowPos);
             return;
         }
 
@@ -236,33 +234,33 @@ void keyboard_handler_main(void)
 
         if(buffer[77]!='\0')
         {
-          moveCursor(dWindow-2);
+          moveCursor(windowPos-2);
           return;
         }
         switch (caps) {
           case 0:
-            buffer[((dWindow%160)/2)-1] = keyboard_map[keycode];
-            videoPtr[dWindow++] = keyboard_map[keycode];  //write text to screen
-            videoPtr[dWindow++] = 0x30; //set background color
-            moveCursor(dWindow);
+            buffer[((windowPos%160)/2)-1] = keyboard_map[keycode];
+            videoPtr[windowPos++] = keyboard_map[keycode];  //write text to screen
+            videoPtr[windowPos++] = 0x30; //set background color
+            moveCursor(windowPos);
             return;
           case 1:
-            buffer[((dWindow%160)/2)-1] = caps_keyboard_map[keycode];
-            videoPtr[dWindow++] = caps_keyboard_map[keycode];  //write text to screen
-            videoPtr[dWindow++] = 0x30; //set background color
-            moveCursor(dWindow);
+            buffer[((windowPos%160)/2)-1] = caps_keyboard_map[keycode];
+            videoPtr[windowPos++] = caps_keyboard_map[keycode];  //write text to screen
+            videoPtr[windowPos++] = 0x30; //set background color
+            moveCursor(windowPos);
             return;
           case 3:
-            buffer[((dWindow%160)/2)-1] = shift_keyboard_map[keycode];
-            videoPtr[dWindow++] = shift_keyboard_map[keycode];  //write text to screen
-            videoPtr[dWindow++] = 0x30; //set background color
-            moveCursor(dWindow);
+            buffer[((windowPos%160)/2)-1] = shift_keyboard_map[keycode];
+            videoPtr[windowPos++] = shift_keyboard_map[keycode];  //write text to screen
+            videoPtr[windowPos++] = 0x30; //set background color
+            moveCursor(windowPos);
             return;
           default:
-            buffer[((dWindow%160)/2)-1] = keyboard_map[keycode];
-            videoPtr[dWindow++] = keyboard_map[keycode];  //write text to screen
-            videoPtr[dWindow++] = 0x30; //set background color
-            moveCursor(dWindow);
+            buffer[((windowPos%160)/2)-1] = keyboard_map[keycode];
+            videoPtr[windowPos++] = keyboard_map[keycode];  //write text to screen
+            videoPtr[windowPos++] = 0x30; //set background color
+            moveCursor(windowPos);
             return;
         }
     }
@@ -273,8 +271,8 @@ void kprint(const char *str)
 {
     unsigned int i = 0;
     while (str[i] != '\0' || str[i]) {
-        videoPtr[dWindow++] = str[i++];
-        videoPtr[dWindow++] = 0x30;
+        videoPtr[windowPos++] = str[i++];
+        videoPtr[windowPos++] = 0x30;
 
     }
 
@@ -347,36 +345,36 @@ void kernelMain(){
     flushString(buffer);
     const char *str = "This is the Kernal Loading up..";
     clear(videoPtr);
-    dWindow = 0;
-    dWindow = (80*2*13)+60;
-    drawSlow(str,dWindow,videoPtr,stringLocation);
+    windowPos = 0;
+    windowPos = (80*2*13)+60;
+    drawSlow(str,windowPos,videoPtr,stringLocation);
     str = "....................................";
-    drawSlow(str,dWindow,videoPtr,stringLocation);
+    drawSlow(str,windowPos,videoPtr,stringLocation);
     clear(videoPtr);
-    dWindow = 0;
+    windowPos = 0;
     drawBox(videoPtr);
     str = "Welcome to OS Lite";
-    dWindow += (160*13);
-    dWindow += 60;
-    drawSlow(str,dWindow,videoPtr,stringLocation);
+    windowPos += (160*13);
+    windowPos += 60;
+    drawSlow(str,windowPos,videoPtr,stringLocation);
     str = "Created by Matt Chris and Anthony";
-    dWindow+= 320;
-    draw(str,dWindow,videoPtr,stringLocation);
+    windowPos+= 320;
+    draw(str,windowPos,videoPtr,stringLocation);
     str = "";
-    dWindow+=160;
-    draw(str,dWindow,videoPtr,stringLocation);
+    windowPos+=160;
+    draw(str,windowPos,videoPtr,stringLocation);
     str = "Press 'Enter' To Continue";
-    dWindow+= 160;
-    draw(str,dWindow,videoPtr,stringLocation);
+    windowPos+= 160;
+    draw(str,windowPos,videoPtr,stringLocation);
     idt_init();
     kb_init();
     while(hang==1);
     str = "";
     clear(videoPtr);
-    dWindow = 0;
+    windowPos = 0;
     moveCursor(2);
-    videoPtr[dWindow++] = '>';  //write text to screen
-    videoPtr[dWindow++] = 0x30; //set background color
+    videoPtr[windowPos++] = '>';  //write text to screen
+    videoPtr[windowPos++] = 0x30; //set background color
     //this is the keyboard being booted up
     //kprint(str);
     //while loop so we can type away.

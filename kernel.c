@@ -35,6 +35,7 @@ void kprint();
 void storeString();
 int checkString(const char* string);
 int printCheck();
+int hellowhatsup = 1;
 //defining some variables that stay const
 char *videoPtr = (char *) 0xb8000; //setting up video memory beginnning at 0xb8000
 unsigned int windowPos = 0; // loop count for drawing video on screen.

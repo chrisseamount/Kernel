@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/Documents/Kernel
+cd ~/Documents/Kernel2/Kernel
 nasm -f elf32 kernel.asm -o kasm.o
 gcc -fno-stack-protector -m32 -c kernelFunctions.c -o kcf.o
 gcc -fno-stack-protector -m32 -c kernel.c -o kc.o

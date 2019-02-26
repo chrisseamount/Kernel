@@ -223,7 +223,32 @@ void keyboard_handler_main(void)
             moveCursor(windowPos);
             return;
         }
-
+        if(keycode == LEFT_ARROW){
+          if(((windowPos%160)/2)-1 <= 0)  // if at the cursor is at the input ">"
+          {
+            return;
+          }
+          windowPos-=2;
+          moveCursor(windowPos);
+          return;
+        }
+        if(keycode == RIGHT_ARROW){
+          if(buffer[((windowPos%160)/2)-1] == '\0')  //if the cursor is at the end of the words then stop
+          {
+            return;
+          }
+          windowPos+=2;
+          moveCursor(windowPos);
+          return;
+        }
+        if(keycode == UP_ARROW){
+          // go UP through list of previous commands
+          return;
+        }
+        if(keycode == DOWN_ARROW){
+          // go DOWN through list of previous commands
+          return;
+        }
         if(keycode == CAPS_KEY_CODE){
           if(caps == 0)
           {

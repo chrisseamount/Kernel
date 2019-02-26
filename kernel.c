@@ -23,6 +23,12 @@
 #define BACKSPACE_KEY_CODE 0X0E
 #define SHIFT_KEY_CODE 0x2A
 #define CAPS_KEY_CODE 0x3A
+// Arrow keys
+#define LEFT_ARROW  0x4B
+#define UP_ARROW    0x48
+#define RIGHT_ARROW 0x4D
+#define DOWN_ARROW  0x50
+// okay fine github here is my small change to code...
 
 //things from assembly
 extern void keyboard_handler(void);
@@ -51,7 +57,7 @@ int hang = 1; // a hang for waiting on input
 int exitKernel = 0; // an exit controller
 int caps = 0; // caps controller
 int storeCaps; // it stores capts
-
+int helloInt = 1; // testing atom for now
 // IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
     unsigned short int offset_lowerbits;

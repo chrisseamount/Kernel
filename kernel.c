@@ -57,7 +57,7 @@ int hang = 1; // a hang for waiting on input
 int exitKernel = 0; // an exit controller
 int caps = 0; // caps controller
 int storeCaps; // it stores capts
-int helloInt = 1; // testing atom for now
+
 // IDT entry is the interrupt descriptor talbe. we are defining this table to use in the kernel. IE making our own interrupts. Intel reserved the first 32.
 struct IDT_entry {
     unsigned short int offset_lowerbits;

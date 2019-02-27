@@ -166,19 +166,37 @@ void keyboard_handler_main(void)
           return;
         }
 
-        if(hang==1){
-          hang=0;
+        /*if(hang==1){
+          hang=0; // do for fancy hanging
           return;
-        }
+        }*/
 
         if(keycode == BACKSPACE_KEY_CODE){  //checks for backspace key and replaces text on screen with a space
             if(buffer[0]=='\0')  //if at top left corner dont do anything
+            // if the thing before it was a null term then replace thing with null term
+            // take a mask and the shift left by the amount of a char????
             {
               return;
             }
             windowPos-=2;
-            buffer[((windowPos%160)/2)-1] = '\0';
-            videoPtr[windowPos]= ' ';
+            int storeWindow = windowPos;
+            if(buffer[((windowPos%160)/2)] == '\0')
+            {
+              buffer[((windowPos%160)/2)-1] = '\0'; // end of string? replace with '\0'
+              videoPtr[windowPos]= ' ';
+            }
+            else
+            {
+                while(buffer[((windowPos%160)/2)] != '\0')
+                {
+                  buffer[((windowPos%160)/2)-1] = buffer[((windowPos%160)/2)];
+                  videoPtr[windowPos] = videoPtr[windowPos+2];// not end of string shift it all down.
+                  buffer[((windowPos%160)/2)] = '\0';
+                  videoPtr[windowPos+2] = ' ';
+                  windowPos+=2;
+                }
+            }
+            windowPos = storeWindow;
             moveCursor(windowPos);
 
             return;
@@ -278,9 +296,29 @@ void keyboard_handler_main(void)
         //switch case for handling upercase
         switch (caps) {
           case 0:
-            buffer[((windowPos%160)/2)-1] = keyboard_map[keycode];
-            videoPtr[windowPos++] = keyboard_map[keycode];  //write text to screen
-            videoPtr[windowPos++] = 0x30; //set background color
+            if(buffer[((windowPos%160)/2)] == '\0') // if we are at the end just work normal
+            {
+              buffer[((windowPos%160)/2)-1] = keyboard_map[keycode];
+              videoPtr[windowPos++] = keyboard_map[keycode];  //write text to screen
+              videoPtr[windowPos++] = 0x30; //set background color
+            }
+            else
+            {//spooky code
+              int stPtr = windowPos+2;
+              while(buffer[((stPtr%160)/2)-1] != '\0') // find the end of the buffer
+              {
+                stPtr++;
+              }
+              while(stPtr != windowPos)
+              {
+                buffer[((stPtr%160)/2)-1] = buffer[((stPtr%160)/2)-2];
+                videoPtr[stPtr] = videoPtr[stPtr-2];
+                stPtr-=2;
+              }
+              buffer[((windowPos%160)/2)-1] = keyboard_map[keycode];
+              videoPtr[windowPos++] = keyboard_map[keycode];  //write text to screen
+              videoPtr[windowPos++] = 0x30; //set background color
+            }
             moveCursor(windowPos);
             return;
           case 1:
@@ -391,7 +429,7 @@ void kernelMain(){
     drawSlow(str,windowPos,videoPtr,stringLocation);
     clear(videoPtr);
     windowPos = 0;
-    drawBox(videoPtr);
+    //drawBox(videoPtr);
     str = "Welcome to OS Lite";
     windowPos += (160*13);
     windowPos += 60;
@@ -409,7 +447,7 @@ void kernelMain(){
     idt_init();
     //starting the keyboard
     kb_init();
-    while(hang==1);
+    //while(hang==1);
     str = "";
     clear(videoPtr);
     windowPos = 0;

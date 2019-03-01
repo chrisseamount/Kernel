@@ -28,7 +28,6 @@
 #define UP_ARROW    0x48
 #define RIGHT_ARROW 0x4D
 #define DOWN_ARROW  0x50
-// okay fine github here is my small change to code...
 
 //things from assembly
 extern void keyboard_handler(void);
@@ -456,6 +455,7 @@ void kernelMain(){
     videoPtr[windowPos++] = 0x30; //set background color
     //while loop so we can type away.
     while(exitKernel==0);
+    //outw(0xB004, 0x00002000);
     return;
 
 }

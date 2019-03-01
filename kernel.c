@@ -368,7 +368,7 @@ int printCheck(){
     i++;
   }
   int x = 0;
-  while(userString[i]!=')'){
+  while(userString[i]!=')' || userString[i+1]!='\0'){
     if(userString[i] == '\0'){
       return 0;
     }

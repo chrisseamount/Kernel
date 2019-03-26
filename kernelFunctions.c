@@ -1,7 +1,7 @@
 #include "kernelFunctions.h"
 
 
-//custom stringLen cause nothign exists
+//custom stringLen cause nothing exists
 unsigned int stringLen(const char *str){ //checks string length
         int i = 0;
     while(str[i] != '\0'){

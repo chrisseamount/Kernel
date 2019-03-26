@@ -415,37 +415,13 @@ void flushString(char* string)
 //our main function for kernel main
 
 void kernelMain(){
-    moveCursor(5000000);
     flushString(buffer);
-    const char *str = "This is the Kernal Loading up..";
     clear(videoPtr);
-    windowPos = 0;
-    windowPos = (80*2*13)+60;
-    drawSlow(str,windowPos,videoPtr,stringLocation);
-    str = "....................................";
-    drawSlow(str,windowPos,videoPtr,stringLocation);
-    clear(videoPtr);
-    windowPos = 0;
-    //drawBox(videoPtr);
-    str = "Welcome to OS Lite";
-    windowPos += (160*13);
-    windowPos += 60;
-    drawSlow(str,windowPos,videoPtr,stringLocation);
-    str = "Created by Matt Chris and Anthony";
-    windowPos+= 320;
-    draw(str,windowPos,videoPtr,stringLocation);
-    str = "";
-    windowPos+=160;
-    draw(str,windowPos,videoPtr,stringLocation);
-    str = "Press 'Enter' To Continue";
-    windowPos+= 160;
-    draw(str,windowPos,videoPtr,stringLocation);
     //starting the interrupt
     idt_init();
     //starting the keyboard
     kb_init();
     //while(hang==1);
-    str = "";
     clear(videoPtr);
     windowPos = 0;
     moveCursor(2);

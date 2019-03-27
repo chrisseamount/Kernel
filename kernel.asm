@@ -13,6 +13,8 @@ global read_port
 global write_port
 global load_idt
 
+;set up memory management in this file
+
 extern kernelMain  ;; kernelMain is our main function defined in the c file
 extern keyboard_handler_main
 

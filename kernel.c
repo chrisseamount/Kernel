@@ -163,7 +163,7 @@ void keyboardFunction(unsigned char keyboard[128],unsigned char keycode)
     }
     while(stPtr != windowPos)
     {
-      buffer[((stPtr%160)/2)-1] = buffer[((stPtr%160)/2)-2];
+      buffer[((stPtr%160)/2)-1] = buffer[((stPtr%160)/2)-2];//shift stuff around
       videoPtr[stPtr] = videoPtr[stPtr-2];
       stPtr-=2;
     }
@@ -231,7 +231,7 @@ void keyboard_handler_main(void)
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
             storeString();
-            flushString(stringtoPrint);
+            flushString(stringtoPrint);//This is the wrong place for this, like by a lot
             if(checkString(exitString)){
               const char* str = "Good Bye!";
               newLine();

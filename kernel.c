@@ -2,6 +2,7 @@
 // Basic Kernal that makes Kernal name on page
 #include "keyboard_map.h" // header holding the keyboard_map
 #include "kernelFunctions.h"
+#include "chell.h"
 //Keyboard definitions
 //In an effort to get keyboard functionality we took code from another source, after looking around there seems to be alot of the same code passed around.
 //Keyboard driver was taken from Arjun Sreedharan as he gave a great article on explaining what is occuring in the code.
@@ -63,13 +64,7 @@ struct IDT_entry {
     unsigned short int offset_higherbits;
 };
 struct IDT_entry IDT[IDT_SIZE];
-struct Screen_Vars {
-    char *videoPtr;
-    unsigned int windowPos;
-    unsigned int cWindow;
-    unsigned int stringLocation;
-};
-struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0};
+
 
 
 //function created by Arjun Sreedharan

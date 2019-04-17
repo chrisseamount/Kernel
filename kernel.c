@@ -1,4 +1,4 @@
-// Created by Matthew Perry, Anthony Kolendo and Chris Seamount
+// Created by Matthew Perry, Anthony Kolendo, Liam Eberhart, and Chris Seamount
 // Basic Kernal that makes Kernal name on page
 #include "keyboard_map.h" // header holding the keyboard_map
 #include "kernelFunctions.h"

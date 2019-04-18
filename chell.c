@@ -25,8 +25,11 @@ void newLine();
 
 void chellMain()
 {
+  //take the string and break into function part, then make the data bits
+
   //if userstring = exit
   if(checkString(exitString)){
+    newLine();
     toPrint("Good bye!");
     /*const char* str = "Good Bye!";
     newLine();
@@ -40,14 +43,23 @@ void chellMain()
     flushString(buffer);
   }
   //if userstring = print()
+  //should be another checkstring
   if(printCheck()){
+    newLine();
     /*newLine();
     kprint(stringtoPrint);
     newLine();*/
-    return;
   }
 }
 
+void split(const char* string[])
+{
+  int i = 0;
+  //while(string[i] != ' ' || string[i] != '\0')
+  //{
+
+  //}
+}
 //move string into the stringtoPrint
 void toPrint(const char* string)
 {

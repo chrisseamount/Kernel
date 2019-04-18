@@ -3,6 +3,7 @@
 #include "keyboard_map.h" // header holding the keyboard_map
 #include "kernelFunctions.h"
 #include "chell.h"
+#include "keyboardFunctions.h"
 //Keyboard definitions
 //In an effort to get keyboard functionality we took code from another source, after looking around there seems to be alot of the same code passed around.
 //Keyboard driver was taken from Arjun Sreedharan as he gave a great article on explaining what is occuring in the code.
@@ -35,6 +36,8 @@ extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
+
+extern struct Screen_Vars screenvars;
 // forward deceleration for functions defined in this file.
 void flushString(char* string);
 void kprint();
@@ -42,7 +45,6 @@ void storeString();
 int checkString(const char* string);
 int printCheck();
 //defining some variables that stay const
-
 unsigned char buffer[79]; // array for handling the input from users
 unsigned char userString[79]; // array fro holding the users information
 unsigned char exitString[] = "exit"; // exit command
@@ -145,8 +147,6 @@ void moveCursor(unsigned int drawWindow){
   write_port(0x3D5, cursorLocation);
 }
 
-
-
 // definition of all the keyboard actions that occur when a key is pressed
 void keyboard_handler_main(void)
 {
@@ -158,18 +158,12 @@ void keyboard_handler_main(void)
     status = read_port(KEYBOARD_STATUS_PORT);
     /* Lowest bit of status will be set if buffer is not empty */
     if (status & 0x01) {
-
         keycode = read_port(KEYBOARD_DATA_PORT);
 
         if(keycode>=0x58 && keycode!=0xAA)
         {
           return;
         }
-
-        /*if(hang==1){
-          hang=0; // do for fancy hanging
-          return;
-        }*/
 
         if(keycode == BACKSPACE_KEY_CODE){  //checks for backspace key and replaces text on screen with a space
             if(buffer[0]=='\0')  //if at top left corner dont do anything
@@ -218,7 +212,7 @@ void keyboard_handler_main(void)
               clear(screenvars.videoPtr);
               screenvars.windowPos = 0;
               screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-              screenvars.videoPtr[screenvars.windowPos++] = 0x30; //set background color
+              screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
               moveCursor(screenvars.windowPos);
               return;
             }
@@ -229,7 +223,7 @@ void keyboard_handler_main(void)
               flushString(buffer);
               flushString(stringtoPrint);
               screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-              screenvars.videoPtr[screenvars.windowPos++] = 0x30; //set background color
+              screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
               moveCursor(screenvars.windowPos);
               return;
             }
@@ -237,7 +231,7 @@ void keyboard_handler_main(void)
             flushString(buffer);
             newLine();
             screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-            screenvars.videoPtr[screenvars.windowPos++] = 0x30; //set background color
+            screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
             moveCursor(screenvars.windowPos);
             return;
         }
@@ -276,18 +270,15 @@ void keyboard_handler_main(void)
           caps = 0;
           return;
         }
-
         if(keycode == SHIFT_KEY_CODE){
           caps = 3;
           return;
         }
-
         if(keycode == 0xAA)
         {
           caps = 0;
           return;
         }
-
         if(buffer[77]!='\0')
         {
           moveCursor(screenvars.windowPos-2);
@@ -297,16 +288,20 @@ void keyboard_handler_main(void)
         //switch case for handling upercase
         switch (caps) {
           case 0:
-            keyboardFunction(keyboard_map,keycode);
+            keyboardFunction(keyboard_map,keycode,buffer);
+            moveCursor(screenvars.windowPos);
             return;
           case 1:
-            keyboardFunction(caps_keyboard_map,keycode);
+            keyboardFunction(caps_keyboard_map,keycode,buffer);
+            moveCursor(screenvars.windowPos);
             return;
           case 3:
-            keyboardFunction(shift_keyboard_map,keycode);
+            keyboardFunction(shift_keyboard_map,keycode,buffer);
+            moveCursor(screenvars.windowPos);
             return;
           default:
-            keyboardFunction(keyboard_map,keycode);
+            keyboardFunction(keyboard_map,keycode,buffer);
+            moveCursor(screenvars.windowPos);
             return;
         }
     }
@@ -318,7 +313,7 @@ void kprint(const char *str)
     unsigned int i = 0;
     while (str[i] != '\0' || str[i]) {
         screenvars.videoPtr[screenvars.windowPos++] = str[i++];
-        screenvars.videoPtr[screenvars.windowPos++] = 0x30;
+        screenvars.videoPtr[screenvars.windowPos++] = 0x02;
 
     }
 
@@ -398,7 +393,7 @@ void kernelMain(){
     screenvars.windowPos = 0;
     moveCursor(2);
     screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-    screenvars.videoPtr[screenvars.windowPos++] = 0x30; //set background color
+    screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
     //while loop so we can type away.
     while(exitKernel==0);
     //outw(0xB004, 0x00002000);

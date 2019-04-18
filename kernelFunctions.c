@@ -26,7 +26,7 @@ void clear(char *videoPtr1){ //clears screen
         //printing blank character
         videoPtr1[dWindow1] = ' ';
         //setting the attribute-byte - green on black screen
-        videoPtr1[dWindow1+1] = 0x30;
+        videoPtr1[dWindow1+1] = 0x02;
         dWindow1 += 2;
     }
 }
@@ -36,7 +36,7 @@ void draw(const char *str,unsigned int dWindow1,char *videoPtr1,unsigned int str
         //setting char in str to char at dWindow in video memory
         videoPtr1[dWindow1] = str[stringLocation1];
         //setting attiribute-byte -green on black screen
-        videoPtr1[dWindow1+1] = 0x30;
+        videoPtr1[dWindow1+1] = 0x02;
         ++stringLocation1;
         dWindow1 += 2;
     }
@@ -51,7 +51,7 @@ void drawSlow(const char *str,unsigned int dWindow1,char *videoPtr1,unsigned int
         //setting char in str to char at dWindow in video memory
         videoPtr1[dWindow1] = str[stringLocation1];
         //setting attiribute-byte -green on black screen
-        videoPtr1[dWindow1+1] = 0x30;
+        videoPtr1[dWindow1+1] = 0x02;
         ++stringLocation1;
         dWindow1 += 2;
     }
@@ -66,12 +66,12 @@ void borderTop(char *videoPtr1){
     while(dWindow1 > 0){
         sleep();
         videoPtr1[dWindow1] = ' ';
-        videoPtr1[dWindow1+1] = 0x00;
+        videoPtr1[dWindow1+1] = 0x02;
         dWindow1 -=2;
     }
     // writing the information to the video memory with frist bit as char second as attribute.
     videoPtr1[dWindow1] = ' ';
-    videoPtr1[dWindow1+1] = 0x00;
+    videoPtr1[dWindow1+1] = 0x02;
 
 }
 // the border starting from the first bit of the last line and moving to the right
@@ -80,7 +80,7 @@ void borderBottom(char *videoPtr1){
      while(dWindow1 < (80*2*25)){
         sleep();
         videoPtr1[dWindow1] = ' ';
-        videoPtr1[dWindow1+1] = 0x00;
+        videoPtr1[dWindow1+1] = 0x02;
         dWindow1+=2;
     }
 }
@@ -90,7 +90,7 @@ void borderLeft(char *videoPtr1){
     for(int i = 0; i < 23; i++){
         sleep();
         videoPtr1[dWindow1] = ' ';
-        videoPtr1[dWindow1+1] = 0x00;
+        videoPtr1[dWindow1+1] = 0x02;
         dWindow1+=160;
     }
 }
@@ -101,7 +101,7 @@ void borderRight(char *videoPtr1){
         sleep();
         dWindow1 -=162;
         videoPtr1[dWindow1] = ' ';
-        videoPtr1[dWindow1+1] = 0x00;
+        videoPtr1[dWindow1+1] = 0x02;
        dWindow1 +=2;
     }
 }

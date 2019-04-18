@@ -47,9 +47,6 @@ int printCheck();
 //defining some variables that stay const
 unsigned char buffer[79]; // array for handling the input from users
 unsigned char userString[79]; // array fro holding the users information
-unsigned char exitString[] = "exit"; // exit command
-unsigned char clearString[] = "clear"; // clear command
-unsigned char printString[] = "print("; // print command
 unsigned char stringtoPrint[79]; // string that is to be printed
 
 int hang = 1; // a hang for waiting on input
@@ -178,7 +175,8 @@ void keyboard_handler_main(void)
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
             storeString();
-            flushString(stringtoPrint);//This is the wrong place for this, like by a lot
+            chellMain();
+            /*flushString(stringtoPrint);//This is the wrong place for this, like by a lot
             if(checkString(exitString)){
               const char* str = "Good Bye!";
               newLine();
@@ -205,8 +203,10 @@ void keyboard_handler_main(void)
               printTack();
               moveCursor(screenvars.windowPos);
               return;
-            }
+            }*/
 
+            kprint(stringtoPrint);
+            flushString(stringtoPrint);
             flushString(buffer);
             newLine();
             printTack();
@@ -298,56 +298,12 @@ void kprint(const char *str)
     }
 
 }
-//checking if print was called
-int printCheck(){
-  int i = 0;
-  while(printString[i]!='\0'){
-    if(userString[i]!=printString[i]){
-      return 0;
-    }
-    if(userString[i]=='('&& printString[i]=='('){
-      i++;
-      break;
-    }
-    else if(userString[i]!='('&& printString[i]=='('){
-      return 0;
-    }
-    i++;
-  }
-  int x = 0;
-  while(userString[i]!=')' || userString[i+1]!='\0'){
-    if(userString[i] == '\0'){
-      return 0;
-    }
-    stringtoPrint[x] = userString[i];
-    x++;
-    i++;
-  }
-  if(userString[i+1]=='\0'){
-    return 1;
-  }
-  return 0;
-}
 //memory storage of a string from the buffer
 void storeString(){
   for(int i = 0; i<79;i++){
     userString[i] = buffer[i];
   }
   return;
-}
-// comparison of strings
-int checkString(const char* string){
-  int i = 0;
-  while(userString[i]!='\0'){
-    if(string[i]!=userString[i]){
-      return 0;
-    }
-    i++;
-  }
-  if(string[i]!='\0'){
-    return 0;
-  }
-  return 1;
 }
 //cleaning the char* passed in for and empty container
 void flushString(char* string)

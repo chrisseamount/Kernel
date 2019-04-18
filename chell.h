@@ -15,4 +15,6 @@ struct Screen_Vars {
     unsigned int windowPos;
     unsigned int cWindow;
     unsigned int stringLocation;
+    unsigned int exitKernel; // an exit controller
+    unsigned int lineFlag;
 };

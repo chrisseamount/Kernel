@@ -4,107 +4,105 @@
 //all this is going to do is take in a string and then dos tuff to it and hand it back to the kernel
 
 #include "chell.h"
-struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0};
+#include "kernelFunctions.h"
+#include "keyboardFunctions.h"
+struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0,0,0};
 //these should be put into a file and checked against so that the user can easily add new commands.
 
 unsigned char buffer[79]; // array for handling the input from users
 unsigned char userString[79]; // array fro holding the users information
 unsigned char stringtoPrint[79]; // string that is to be printed
-
-unsigned char printString[] = "print("; // print command
-unsigned char exitString[] = "exit"; // exit command
-unsigned char clearString[] = "clear"; // clear command
+unsigned char word[] = "";
 
 
+extern void moveCursor(unsigned int drawWindow);
 void storeString();
 int printCheck();
 int checkString(const char* string);
 void flushString(char* string);
 void toPrint(const char* string);
+void split(char string[]);
 void newLine();
 
 void chellMain()
 {
   //take the string and break into function part, then make the data bits
+  //split debugging
+  split(userString);
 
   //if userstring = exit
-  if(checkString(exitString)){
+  if(checkString("exit"))
+  {
     newLine();
     toPrint("Good bye!");
-    /*const char* str = "Good Bye!";
-    newLine();
-    kprint(str);
-    flushString(buffer);
-    exitKernel = 1;
-    moveCursor(50000);*/
+    screenvars.exitKernel = 1;
+    return;
   }
   //if  userstring = clearString
-  if(checkString(clearString)){
+  if(checkString("clear"))
+  {
     flushString(buffer);
+    clear(screenvars.videoPtr);
+    screenvars.windowPos = 0;
+    moveCursor(screenvars.windowPos);
+    screenvars.lineFlag = 1;
+    return;
   }
   //if userstring = print()
-  //should be another checkstring
-  if(printCheck()){
+  if(checkString("print"))
+  {
     newLine();
-    /*newLine();
-    kprint(stringtoPrint);
-    newLine();*/
+    toPrint(userString);
+    return;
   }
+  if(checkString("hex"))
+  {
+    newLine();
+    //call the dec to hex converter.
+    return;
+  }
+
 }
 
-void split(const char* string[])
+void split(char string[])
 {
+  flushString(word);
+  unsigned char restOfString[79];
   int i = 0;
-  //while(string[i] != ' ' || string[i] != '\0')
-  //{
-
-  //}
+  while(string[i] != ' ' && i<=79)
+  {
+    word[i] = string[i]; // get the first word
+    i++;
+  }
+  i++;
+  int j = i;
+  while(i<=79)
+  {
+    restOfString[i-j] = string[i]; // move everything else down the line
+    i++;
+  }
+  i = 0;
+  while(i<=79)
+  {
+    string[i] = restOfString[i]; //put it back into the string
+    i++;
+  }
 }
 //move string into the stringtoPrint
 void toPrint(const char* string)
 {
-  for(int i = 0; i<79;i++){
+  for(int i = 0; i<79;i++)
+  {
     stringtoPrint[i] = string[i];
   }
   return;
-}
-//checking if print was called
-int printCheck()
-{
-  int i = 0;
-  while(printString[i]!='\0'){
-    if(userString[i]!=printString[i]){
-      return 0;
-    }
-    if(userString[i]=='('&& printString[i]=='('){
-      i++;
-      break;
-    }
-    else if(userString[i]!='('&& printString[i]=='('){
-      return 0;
-    }
-    i++;
-  }
-  int x = 0;
-  while(userString[i]!=')' || userString[i+1]!='\0'){
-    if(userString[i] == '\0'){
-      return 0;
-    }
-    stringtoPrint[x] = userString[i];
-    x++;
-    i++;
-  }
-  if(userString[i+1]=='\0'){
-    return 1;
-  }
-  return 0;
 }
 // comparison of strings
 int checkString(const char* string)
 {
   int i = 0;
-  while(userString[i]!='\0'){
-    if(string[i]!=userString[i]){
+  while(word[i]!='\0'){
+    if(string[i]!=word[i]){
       return 0;
     }
     i++;
@@ -120,12 +118,3 @@ void newLine()
     unsigned int lineSize = 160;
     screenvars.windowPos = screenvars.windowPos + (lineSize - screenvars.windowPos % (lineSize));
 }
-//memory storage of a string from the buffer
-/*
-void storeString()
-{
-  for(int i = 0; i<79;i++){
-    userString[i] = buffer[i];
-  }
-  return;
-}*/

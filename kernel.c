@@ -50,7 +50,6 @@ unsigned char userString[79]; // array fro holding the users information
 unsigned char stringtoPrint[79]; // string that is to be printed
 
 int hang = 1; // a hang for waiting on input
-int exitKernel = 0; // an exit controller
 int caps = 0; // caps controller
 int storeCaps; // it stores capts
 
@@ -128,7 +127,8 @@ void kb_init(void)
     write_port(0x21 , 0xFD);
 }
 //move cursor function that takes the current draw window position and writes to the ports of the vga move cursor
-void moveCursor(unsigned int drawWindow){
+void moveCursor(unsigned int drawWindow)
+{
   unsigned short cursorLocation = (drawWindow/2);
   //sending in the interrupt 14 to the cursor position to inform of low bits
   write_port(0x3D4 ,14);
@@ -171,40 +171,15 @@ void keyboard_handler_main(void)
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
             storeString();
-            chellMain();
-            /*flushString(stringtoPrint);//This is the wrong place for this, like by a lot
-            if(checkString(exitString)){
-              const char* str = "Good Bye!";
-              newLine();
-              kprint(str);
-              flushString(buffer);
-              exitKernel = 1;
-              moveCursor(50000);
-              return;
-            }
-            if(checkString(clearString)){
-              flushString(buffer);
-              clear(screenvars.videoPtr);
-              screenvars.windowPos = 0;
-              printTack();
-              moveCursor(screenvars.windowPos);
-              return;
-            }
-            if(printCheck()){
-              newLine();
-              kprint(stringtoPrint);
-              newLine();
-              flushString(buffer);
-              flushString(stringtoPrint);
-              printTack();
-              moveCursor(screenvars.windowPos);
-              return;
-            }*/
-
+            chellMain(); // find out what to print yo.
             kprint(stringtoPrint);
             flushString(stringtoPrint);
             flushString(buffer);
-            newLine();
+            if(screenvars.lineFlag == 0)
+            {
+              newLine();
+            }
+            screenvars.lineFlag = 0;
             printTack();
             moveCursor(screenvars.windowPos);
             return;
@@ -295,7 +270,8 @@ void kprint(const char *str)
 
 }
 //memory storage of a string from the buffer
-void storeString(){
+void storeString()
+{
   for(int i = 0; i<79;i++){
     userString[i] = buffer[i];
   }
@@ -312,8 +288,8 @@ void flushString(char* string)
   }
 }
 //our main function for kernel main
-
-void kernelMain(){
+void kernelMain()
+{
     flushString(buffer);
     clear(screenvars.videoPtr);
     //starting the interrupt
@@ -326,7 +302,7 @@ void kernelMain(){
     moveCursor(2);
     printTack();
     //while loop so we can type away.
-    while(exitKernel==0);
+    while(screenvars.exitKernel==0);
     //outw(0xB004, 0x00002000);
     return;
 

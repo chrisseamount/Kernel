@@ -172,27 +172,8 @@ void keyboard_handler_main(void)
             {
               return;
             }
-            screenvars.windowPos-=2;
-            int storeWindow = screenvars.windowPos;
-            if(buffer[((screenvars.windowPos%160)/2)] == '\0')
-            {
-              buffer[((screenvars.windowPos%160)/2)-1] = '\0'; // end of string? replace with '\0'
-              screenvars.videoPtr[screenvars.windowPos]= ' ';
-            }
-            else
-            {
-                while(buffer[((screenvars.windowPos%160)/2)] != '\0')
-                {
-                  buffer[((screenvars.windowPos%160)/2)-1] = buffer[((screenvars.windowPos%160)/2)];
-                  screenvars.videoPtr[screenvars.windowPos] = screenvars.videoPtr[screenvars.windowPos+2];// not end of string shift it all down.
-                  buffer[((screenvars.windowPos%160)/2)] = '\0';
-                  screenvars.videoPtr[screenvars.windowPos+2] = ' ';
-                  screenvars.windowPos+=2;
-                }
-            }
-            screenvars.windowPos = storeWindow;
+            backspace(buffer);
             moveCursor(screenvars.windowPos);
-
             return;
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
@@ -211,8 +192,7 @@ void keyboard_handler_main(void)
               flushString(buffer);
               clear(screenvars.videoPtr);
               screenvars.windowPos = 0;
-              screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-              screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
+              printTack();
               moveCursor(screenvars.windowPos);
               return;
             }
@@ -222,16 +202,14 @@ void keyboard_handler_main(void)
               newLine();
               flushString(buffer);
               flushString(stringtoPrint);
-              screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-              screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
+              printTack();
               moveCursor(screenvars.windowPos);
               return;
             }
 
             flushString(buffer);
             newLine();
-            screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-            screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
+            printTack();
             moveCursor(screenvars.windowPos);
             return;
         }
@@ -306,6 +284,8 @@ void keyboard_handler_main(void)
         }
     }
 }
+
+
 
 //keyboardDrawFunction
 void kprint(const char *str)
@@ -392,8 +372,7 @@ void kernelMain(){
     clear(screenvars.videoPtr);
     screenvars.windowPos = 0;
     moveCursor(2);
-    screenvars.videoPtr[screenvars.windowPos++] = '>';  //write text to screen
-    screenvars.videoPtr[screenvars.windowPos++] = 0x02; //set background color
+    printTack();
     //while loop so we can type away.
     while(exitKernel==0);
     //outw(0xB004, 0x00002000);

@@ -6,6 +6,8 @@ int checkString(const char* string);
 void flushString(char* string);
 void toPrint(const char* string);
 void chellMain();
+void newLine();
+
 
 
 struct Screen_Vars {

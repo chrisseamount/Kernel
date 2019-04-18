@@ -21,6 +21,7 @@ int printCheck();
 int checkString(const char* string);
 void flushString(char* string);
 void toPrint(const char* string);
+void newLine();
 
 void chellMain()
 {
@@ -55,16 +56,6 @@ void toPrint(const char* string)
   }
   return;
 }
-//cleaning the char* passed in for and empty container
-/*void flushString(char* string)
-{
-  int i = 0;
-  while(string[i] != '\0')
-  {
-    string[i] = '\0';
-    i++;
-  }
-}*/
 //checking if print was called
 int printCheck()
 {
@@ -110,6 +101,12 @@ int checkString(const char* string)
     return 0;
   }
   return 1;
+}
+//newline function
+void newLine()
+{
+    unsigned int lineSize = 160;
+    screenvars.windowPos = screenvars.windowPos + (lineSize - screenvars.windowPos % (lineSize));
 }
 //memory storage of a string from the buffer
 /*

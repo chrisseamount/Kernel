@@ -120,11 +120,7 @@ void idt_init(void)
 
     load_idt(idt_ptr);
 }
-//newline function
-void newLine(){
-    unsigned int lineSize = BYTES_ELEMENT*COLUMNS_LINE;
-    screenvars.windowPos = screenvars.windowPos + (lineSize - screenvars.windowPos % (lineSize));
-}
+
 //starting up the keyboard
 void kb_init(void)
 {

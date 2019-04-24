@@ -1,3 +1,3 @@
 #pragma once
 
-char DtoHMain(const char* decNumber);
+char* DtoHMain(const char* decNumber);

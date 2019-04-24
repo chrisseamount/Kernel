@@ -2,7 +2,7 @@
 #include "DtoH.h"
 #include "chell.h"
 char hexNumber[79];
-char DtoHMain(const char* decNumber)
+char* DtoHMain(const char* stringNumber)
 {
   char temphexNumber[79];
   int temp = 0;
@@ -11,10 +11,10 @@ char DtoHMain(const char* decNumber)
   // get the actual integer value
   while(i<=79)
   {
-    if(decNumber[i] == '\0') {break;}
-    int n = (int)decNumber[i];
-    n-=30;
-    dec=dec*10;
+    if(stringNumber[i] == '\0') {break;} // if at the end of the given userString
+    int n = (int)stringNumber[i]; // get the integer as an ascii char
+    n-=48; // make that the real number
+    dec=dec*10; // times dec by ten so that it adds up correctly.
     dec+=n;
     i++;
   }
@@ -43,6 +43,5 @@ char DtoHMain(const char* decNumber)
     hexNumber[k] = temphexNumber[j];
     k++;
   }
-
   return hexNumber;
 }

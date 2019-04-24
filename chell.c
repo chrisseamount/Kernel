@@ -76,7 +76,8 @@ void chellMain()
   {
     newLine();
     checkString(userString);
-    stringCon("Unrecognized command: " ,word);
+    stringCon("unrecognized command: \"" ,word);
+    stringCon(retString, "\"");
     toPrint(retString);
     flushString(retString);
     return;

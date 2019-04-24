@@ -7,6 +7,7 @@ void flushString(char* string);
 void toPrint(const char* string);
 void chellMain();
 void newLine();
+void stringCon(char *string1, char *string2);
 
 
 

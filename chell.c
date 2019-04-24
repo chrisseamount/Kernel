@@ -7,13 +7,16 @@
 #include "kernelFunctions.h"
 #include "keyboardFunctions.h"
 #include "DtoH.h"
+#include "DtoB.h"
 struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0,0,0};
 //these should be put into a file and checked against so that the user can easily add new commands.
 
 unsigned char buffer[79]; // array for handling the input from users
 unsigned char userString[79]; // array fro holding the users information
 unsigned char stringtoPrint[79]; // string that is to be printed
+char retString[79];
 unsigned char word[] = "";
+char command[] = "";
 
 
 extern void moveCursor(unsigned int drawWindow);
@@ -24,6 +27,7 @@ void flushString(char* string);
 void toPrint(const char* string);
 void split(char string[]);
 void newLine();
+void stringCon(char* string1, char* string2);
 
 void chellMain()
 {
@@ -62,8 +66,41 @@ void chellMain()
     toPrint(DtoHMain(userString));
     return;
   }
+  if(checkString("bin"))
+  {
+    newLine();
+    toPrint(DtoBMain(userString));
+    return;
+  }
+  else
+  {
+    newLine();
+    checkString(userString);
+    stringCon("Unrecognized command: " ,word);
+    toPrint(retString);
+    flushString(retString);
+    return;
+  }
 
+}
 
+void stringCon(char* string1, char* string2)
+{
+  int i = 0;
+  while (string1[i] != '\0')
+  {
+    retString[i] = string1[i];
+    i++;
+  }
+  int k = 0;
+  while(i < 79)
+  {
+    retString[i] = string2[k];
+    i++;
+    k++;
+  }
+  retString[i+1] = '\0';
+  return;
 }
 
 void split(char string[])

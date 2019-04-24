@@ -1,11 +1,12 @@
 //decimal to hex converter.
-#include "DtoH.h"
+#include "DtoB.h"
 #include "chell.h"
-char hexNumber[79];
-char* DtoHMain(const char* stringNumber)
+#include "kernelFunctions.h"
+char binNumber[79];
+char* DtoBMain(const char* stringNumber)
 {
-  flushString(hexNumber);
-  char temphexNumber[79];
+  flushString(binNumber);
+  char tempbinNumber[79];
   int temp = 0;
   int dec = 0;
   int i = 0;
@@ -19,30 +20,21 @@ char* DtoHMain(const char* stringNumber)
     dec+=n;
     i++;
   }
+  int k=0;
   i = 0;
-  while(dec != 0 )
+  while(dec>0)
   {
-    temp = 0;
-    temp = dec % 16;
-    if(temp < 10)
-    {
-      temphexNumber[i] = (char)(temp + 48);
-      i++;
-    }
-    else
-    {
-      temphexNumber[i] = (char)(temp + 55);
-      i++;
-    }
-    dec = dec / 16;
+    tempbinNumber[k] = (char)((dec % 2)+48);
+    dec = dec/2;
+    k++;
+    i++;
   }
-  //gotta flip the number around
-  int k = 0;
-  hexNumber[i+1] = '\0';
+  binNumber[k+1] = '\0';
+  k = 0;
   for(int j = i-1; j>=0; j--)
   {
-    hexNumber[k] = temphexNumber[j];
+    binNumber[k] = tempbinNumber[j];
     k++;
   }
-  return hexNumber;
+  return binNumber;
 }

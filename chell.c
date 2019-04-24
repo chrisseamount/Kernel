@@ -8,7 +8,7 @@
 #include "keyboardFunctions.h"
 #include "DtoH.h"
 #include "DtoB.h"
-struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0,0,0};
+struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0,0,0,0};
 //these should be put into a file and checked against so that the user can easily add new commands.
 
 unsigned char buffer[79]; // array for handling the input from users
@@ -72,11 +72,16 @@ void chellMain()
     toPrint(DtoBMain(userString));
     return;
   }
+  if(checkString("help"))
+  {
+    screenvars.helpFlag = 1;
+    return;
+  }
   else
   {
     newLine();
     checkString(userString);
-    stringCon("unrecognized command: \"" ,word);
+    stringCon("Unrecognized Command: \"" ,word);
     stringCon(retString, "\"");
     toPrint(retString);
     flushString(retString);

@@ -179,6 +179,22 @@ void keyboard_handler_main(void)
             {
               newLine();
             }
+            if(screenvars.helpFlag == 1)
+            {
+              kprint("Recognized Commands:");
+              newLine();
+              kprint("  print- prints text to the terminal");
+              newLine();
+              kprint("  clear- clears text on screen");
+              newLine();
+              kprint("  exit- exits kernel");
+              newLine();
+              kprint("  hex- converts decimal value into hex");
+              newLine();
+              kprint("  bin- converts decimal value into binary");
+              newLine();
+              screenvars.helpFlag = 0;
+            }
             screenvars.lineFlag = 0;
             printTack();
             moveCursor(screenvars.windowPos);

@@ -6,6 +6,7 @@
 #include "chell.h"
 #include "kernelFunctions.h"
 #include "keyboardFunctions.h"
+#include "DtoH.h"
 struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0,0,0};
 //these should be put into a file and checked against so that the user can easily add new commands.
 
@@ -58,9 +59,10 @@ void chellMain()
   if(checkString("hex"))
   {
     newLine();
-    //call the dec to hex converter.
+    DtoHMain(userString);
     return;
   }
+
 
 }
 

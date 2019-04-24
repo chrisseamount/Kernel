@@ -59,7 +59,7 @@ void chellMain()
   if(checkString("hex"))
   {
     newLine();
-    DtoHMain(userString);
+    toPrint(DtoHMain(userString));
     return;
   }
 

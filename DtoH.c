@@ -2,8 +2,9 @@
 #include "DtoH.h"
 #include "chell.h"
 char hexNumber[79];
-void DtoHMain(const char* decNumber)
+char DtoHMain(const char* decNumber)
 {
+  char temphexNumber[79];
   int temp = 0;
   int dec = 0;
   int i = 0;
@@ -24,23 +25,24 @@ void DtoHMain(const char* decNumber)
     temp = dec % 16;
     if(temp < 10)
     {
-      hexNumber[i] = (char)(temp + 48);
+      temphexNumber[i] = (char)(temp + 48);
       i++;
     }
     else
     {
-      hexNumber[i] = (char)(temp + 65);
+      temphexNumber[i] = (char)(temp + 55);
       i++;
     }
     dec = dec / 16;
   }
   //gotta flip the number around
+  int k = 0;
+  hexNumber[i+1] = '\0';
   for(int j = i-1; j>=0; j--)
   {
-    char x[2];
-    x[0] = hexNumber[j];
-    x[1] = '\0';
-    toPrint(x);
+    hexNumber[k] = temphexNumber[j];
+    k++;
   }
-  return;
+
+  return hexNumber;
 }

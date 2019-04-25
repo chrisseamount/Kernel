@@ -14,6 +14,7 @@ char* DtoBMain(const char* stringNumber)
   while(i<=79)
   {
     if(stringNumber[i] == '\0') {break;} // if at the end of the given userString
+    if((int)stringNumber[i] >= 58 || (int)stringNumber[i] <= 47){return "Please input only numbers.";}
     int n = (int)stringNumber[i]; // get the integer as an ascii char
     n-=48; // make that the real number
     dec=dec*10; // times dec by ten so that it adds up correctly.

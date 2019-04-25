@@ -1,7 +1,7 @@
 //decimal to hex converter.
 #include "DtoB.h"
 #include "chell.h"
-#include "kernelFunctions.h"
+
 char binNumber[79];
 char* DtoBMain(const char* stringNumber)
 {

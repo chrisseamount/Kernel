@@ -8,6 +8,7 @@
 #include "keyboardFunctions.h"
 #include "DtoH.h"
 #include "DtoB.h"
+#include "calc.h"
 struct Screen_Vars screenvars = {(char *)0xb8000,0,0,0,0,0,0};
 //these should be put into a file and checked against so that the user can easily add new commands.
 
@@ -75,6 +76,20 @@ void chellMain()
   if(checkString("help"))
   {
     screenvars.helpFlag = 1;
+    return;
+  }
+  if(checkString("add"))
+  {
+    newLine();
+    split(userString);
+    toPrint(add(word,userString));
+    return;
+  }
+  if(checkString("sub"))
+  {
+    newLine();
+    split(userString);
+    toPrint(sub(word,userString));
     return;
   }
   else

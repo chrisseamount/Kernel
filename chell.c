@@ -18,6 +18,7 @@ unsigned char stringtoPrint[79]; // string that is to be printed
 char retString[79];
 unsigned char word[] = "";
 char command[] = "";
+extern int lineNumber;
 
 
 extern void moveCursor(unsigned int drawWindow);
@@ -184,6 +185,12 @@ int checkString(const char* string)
 // to know what ison the screen and what commands have been entered
 void newLine()
 {
+    lineNumber++;
+    if(lineNumber >= 25)
+    {
+      lineNumber--;
+      scrollScreen(screenvars.videoPtr);
+    }
     unsigned int lineSize = 160;
     screenvars.windowPos = screenvars.windowPos + (lineSize - screenvars.windowPos % (lineSize));
 }

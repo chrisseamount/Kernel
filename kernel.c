@@ -1,5 +1,6 @@
 // Created by Matthew Perry, Anthony Kolendo, Liam Eberhart, and Chris Seamount
 // Basic Kernal that makes Kernal name on page
+#include "kernel.h"
 #include "keyboard_map.h" // header holding the keyboard_map
 #include "kernelFunctions.h"
 #include "chell.h"
@@ -171,6 +172,7 @@ void keyboard_handler_main(void)
         }
         if(keycode == ENTER_KEY_CODE) { //newlines if enter key is pressed
             storeString();
+            // fill a line of the next screen buffer.
             chellMain(); // find out what to print yo.
             kprint(stringtoPrint);
             flushString(stringtoPrint);
@@ -287,9 +289,16 @@ void kprint(const char *str)
     while (str[i] != '\0' || str[i]) {
         screenvars.videoPtr[screenvars.windowPos++] = str[i++];
         screenvars.videoPtr[screenvars.windowPos++] = 0x02;
-
     }
+}
 
+void sprint(const char *str)
+{
+    unsigned int i = 0;
+    while (i<80*25) {
+        screenvars.videoPtr[screenvars.windowPos++] = str[i++];
+        screenvars.videoPtr[screenvars.windowPos++] = 0x02;
+    }
 }
 //memory storage of a string from the buffer
 void storeString()

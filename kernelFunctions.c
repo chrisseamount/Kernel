@@ -1,6 +1,10 @@
 #include "kernelFunctions.h"
+#include "chell.h"
+#include "kernel.h"
 
+int lineNumber = 0;
 
+extern struct Screen_Vars screenvars;
 //custom stringLen cause nothing exists
 unsigned int stringLen(const char *str){ //checks string length
         int i = 0;
@@ -11,6 +15,8 @@ unsigned int stringLen(const char *str){ //checks string length
     if(i%2 == 1){
        i++;
     }
+
+
 return i;
 }
 
@@ -21,6 +27,7 @@ void sleep(){ //makeshift sleep function needs some revamping
 }
 
 void clear(char *videoPtr1){ //clears screen
+  lineNumber = 0;
     unsigned int dWindow1 = 0;
     while (dWindow1 < 80*25*2) {
         //printing blank character
@@ -29,6 +36,22 @@ void clear(char *videoPtr1){ //clears screen
         videoPtr1[dWindow1+1] = 0x02;
         dWindow1 += 2;
     }
+}
+void scrollScreen(char *videoPtr1){ //clears screen
+    unsigned int dWindow1 = 160; // start one line in
+    char tempVidPtr[25 * 80 * 2];
+    //pull everything out
+    while (dWindow1 < 80*25*2) {
+        tempVidPtr[dWindow1-160] = videoPtr1[dWindow1];
+        //setting the attribute-byte - green on black screen
+        dWindow1++;
+    }
+    clear(screenvars.videoPtr);
+    //copy it back over
+    sprint(tempVidPtr);
+    screenvars.windowPos = (24);
+    moveCursor(screenvars.windowPos);
+    screenvars.lineFlag = 1;
 }
 void draw(const char *str,unsigned int dWindow1,char *videoPtr1,unsigned int stringLocation1){
   // writing string to video memory

@@ -6,6 +6,7 @@
 unsigned int stringLen(const char *str);
 void sleep();
 void clear(char *videoPtr);
+void scrollScreen(char *videoPtr);
 void draw(const char *str,unsigned int dWindow,char *videoPtr,unsigned int stringLocation);
 void drawSlow(const char *str,unsigned int dWindow,char *videoPtr,unsigned int stringLocation);
 void borderTop(char *videoPtr);

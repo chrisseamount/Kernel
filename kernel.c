@@ -187,17 +187,17 @@ void keyboard_handler_main(void)
               newLine();
               kprint("  clear- clears text on screen");
               newLine();
-              kprint("  exit-  exit the kernel");
+              kprint("   exit- exit the kernel");
               newLine();
-              kprint("  hex-   converts base 10 to base 16");
+              kprint("    hex- converts base 10 to base 16");
               newLine();
-              kprint("  bin-   converts base 10 to base 2");
+              kprint("    bin- converts base 10 to base 2");
               newLine();
-              kprint("  add-   adds two integers");
+              kprint("    add- adds two integers");
               newLine();
-              kprint("  sub-   subtracts two integers");
+              kprint("    sub- subtracts two integers");
               newLine();
-              kprint("  mul-   multiplies two integers");
+              kprint("    mul- multiplies two integers");
               newLine();
               screenvars.helpFlag = 0;
             }

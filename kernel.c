@@ -193,6 +193,12 @@ void keyboard_handler_main(void)
               newLine();
               kprint("  bin-   converts decimal value into binary");
               newLine();
+              kprint("  add-   adds two integers");
+              newLine();
+              kprint("  sub-   subtracts two integers");
+              newLine();
+              kprint("  mul-   multiplies two integers");
+              newLine();
               screenvars.helpFlag = 0;
             }
             screenvars.lineFlag = 0;

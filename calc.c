@@ -13,6 +13,7 @@ char* add(const char* num1, const char* num2)
   while(i<=79)
   {
     if(num1[i] == '\0') {break;} // if at the end of the given userString
+    if((int)num1[i] >= 58 || (int)num1[i] <= 47){return "Please input only numbers.";}
     int n = (int)num1[i]; // get the integer as an ascii char
     n-=48; // make that the real number
     dec1=dec1*10; // times dec by ten so that it adds up correctly.
@@ -23,6 +24,7 @@ char* add(const char* num1, const char* num2)
   while(i<=79)
   {
     if(num2[i] == '\0') {break;} // if at the end of the given userString
+    if((int)num2[i] >= 58 || (int)num2[i] <= 47){return "Please input only numbers.";}
     int n = (int)num2[i]; // get the integer as an ascii char
     n-=48; // make that the real number
     dec2=dec2*10; // times dec by ten so that it adds up correctly.
@@ -60,6 +62,7 @@ char* sub(const char* num1, const char* num2)
   while(i<=79)
   {
     if(num1[i] == '\0') {break;} // if at the end of the given userString
+    if((int)num1[i] >= 58 || (int)num1[i] <= 47){return "Please input only numbers.";}
     int n = (int)num1[i]; // get the integer as an ascii char
     n-=48; // make that the real number
     dec1=dec1*10; // times dec by ten so that it adds up correctly.
@@ -70,6 +73,7 @@ char* sub(const char* num1, const char* num2)
   while(i<=79)
   {
     if(num2[i] == '\0') {break;} // if at the end of the given userString
+    if((int)num2[i] >= 58 || (int)num2[i] <= 47){return "Please input only numbers.";}
     int n = (int)num2[i]; // get the integer as an ascii char
     n-=48; // make that the real number
     dec2=dec2*10; // times dec by ten so that it adds up correctly.
@@ -123,6 +127,7 @@ char* mul(const char* num1, const char* num2)
   while(i<=79)
   {
     if(num1[i] == '\0') {break;} // if at the end of the given userString
+    if((int)num1[i] >= 58 || (int)num2[i] <= 47){return "Please input only numbers.";}
     int n = (int)num1[i]; // get the integer as an ascii char
     n-=48; // make that the real number
     dec1=dec1*10; // times dec by ten so that it adds up correctly.
@@ -133,6 +138,7 @@ char* mul(const char* num1, const char* num2)
   while(i<=79)
   {
     if(num2[i] == '\0') {break;} // if at the end of the given userString
+    if((int)num2[i] >= 58 || (int)num2[i] <= 47){return "Please input only numbers.";}
     int n = (int)num2[i]; // get the integer as an ascii char
     n-=48; // make that the real number
     dec2=dec2*10; // times dec by ten so that it adds up correctly.

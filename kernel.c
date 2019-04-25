@@ -187,11 +187,11 @@ void keyboard_handler_main(void)
               newLine();
               kprint("  clear- clears text on screen");
               newLine();
-              kprint("  exit-  exits kernel");
+              kprint("  exit-  exit the kernel");
               newLine();
-              kprint("  hex-   converts decimal value into hex");
+              kprint("  hex-   converts base 10 to base 16");
               newLine();
-              kprint("  bin-   converts decimal value into binary");
+              kprint("  bin-   converts base 10 to base 2");
               newLine();
               kprint("  add-   adds two integers");
               newLine();

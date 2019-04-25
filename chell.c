@@ -180,6 +180,8 @@ int checkString(const char* string)
   return 1;
 }
 //newline function
+// every time this is hit we should copy what is behind it this will allow us
+// to know what ison the screen and what commands have been entered
 void newLine()
 {
     unsigned int lineSize = 160;

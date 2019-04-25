@@ -85,6 +85,13 @@ void chellMain()
     toPrint(add(word,userString));
     return;
   }
+  if(checkString("mul"))
+  {
+    newLine();
+    split(userString);
+    toPrint(mul(word,userString));
+    return;
+  }
   if(checkString("sub"))
   {
     newLine();

@@ -1,4 +1,4 @@
 *.o
 build.sh
 gitHub.sh
-Kernel
+kernel

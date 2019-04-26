@@ -39,19 +39,23 @@ void clear(char *videoPtr1){ //clears screen
 }
 void scrollScreen(char *videoPtr1){ //clears screen
     unsigned int dWindow1 = 160; // start one line in
-    char tempVidPtr[25 * 80 * 2];
+    char tempVidPtr[25 * 80];
+    flushString(tempVidPtr);
     //pull everything out
+    int i = 0;
     while (dWindow1 < 80*25*2) {
-        tempVidPtr[dWindow1-160] = videoPtr1[dWindow1];
+        tempVidPtr[i] = videoPtr1[dWindow1];
         //setting the attribute-byte - green on black screen
-        dWindow1++;
+        dWindow1=dWindow1+2;
+        i++;
     }
     clear(screenvars.videoPtr);
     //copy it back over
-    sprint(tempVidPtr);
-    screenvars.windowPos = (24);
+
+    screenvars.windowPos = 0;
     moveCursor(screenvars.windowPos);
-    screenvars.lineFlag = 1;
+
+    kprint(tempVidPtr);
 }
 void draw(const char *str,unsigned int dWindow1,char *videoPtr1,unsigned int stringLocation1){
   // writing string to video memory

@@ -185,12 +185,12 @@ int checkString(const char* string)
 // to know what ison the screen and what commands have been entered
 void newLine()
 {
-    lineNumber++;
-    if(lineNumber >= 25)
-    {
-      lineNumber--;
-      scrollScreen(screenvars.videoPtr);
-    }
+
     unsigned int lineSize = 160;
     screenvars.windowPos = screenvars.windowPos + (lineSize - screenvars.windowPos % (lineSize));
+
+    if(screenvars.windowPos>=80*25*2)
+    {
+      scrollScreen(screenvars.videoPtr);
+    }
 }

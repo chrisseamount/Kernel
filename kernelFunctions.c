@@ -39,7 +39,7 @@ void clear(char *videoPtr1){ //clears screen
 }
 void scrollScreen(char *videoPtr1){ //clears screen
     unsigned int dWindow1 = 160; // start one line in
-    char tempVidPtr[25 * 80];
+    char tempVidPtr[25 * 80 - 3];
     flushString(tempVidPtr);
     //pull everything out
     int i = 0;

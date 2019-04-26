@@ -295,7 +295,7 @@ void kprint(const char *str)
 void sprint(const char *str)
 {
     unsigned int i = 0;
-    while (i<80*25) {
+    while (i<80*24*2) {
         screenvars.videoPtr[screenvars.windowPos++] = str[i++];
         screenvars.videoPtr[screenvars.windowPos++] = 0x02;
     }

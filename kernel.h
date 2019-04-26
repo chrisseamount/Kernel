@@ -1,4 +1,4 @@
 #pragma once
 
-void kprint(const char *str);
+void sprint(const char *str);
 void moveCursor(unsigned int drawWindow);

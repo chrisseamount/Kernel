@@ -286,7 +286,7 @@ void keyboard_handler_main(void)
 void kprint(const char *str)
 {
     unsigned int i = 0;
-    while (str[i] != '\0' || str[i]) {
+    while (str[i] != '\0') {
         screenvars.videoPtr[screenvars.windowPos++] = str[i++];
         screenvars.videoPtr[screenvars.windowPos++] = 0x02;
     }
@@ -295,7 +295,7 @@ void kprint(const char *str)
 void sprint(const char *str)
 {
     unsigned int i = 0;
-    while (i<80*24*2) {
+    while (i<80*24) {
         screenvars.videoPtr[screenvars.windowPos++] = str[i++];
         screenvars.videoPtr[screenvars.windowPos++] = 0x02;
     }

@@ -39,7 +39,7 @@ void clear(char *videoPtr1){ //clears screen
 }
 void scrollScreen(char *videoPtr1){ //clears screen
     unsigned int dWindow1 = 160; // start one line in
-    char tempVidPtr[25 * 80 - 3];
+    char tempVidPtr[25 * 80];
     flushString(tempVidPtr);
     //pull everything out
     int i = 0;
@@ -55,7 +55,7 @@ void scrollScreen(char *videoPtr1){ //clears screen
     screenvars.windowPos = 0;
     moveCursor(screenvars.windowPos);
 
-    kprint(tempVidPtr);
+    sprint(tempVidPtr);
 }
 void draw(const char *str,unsigned int dWindow1,char *videoPtr1,unsigned int stringLocation1){
   // writing string to video memory

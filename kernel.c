@@ -312,9 +312,11 @@ void storeString()
 void flushString(char* string)
 {
   int i = 0;
-  while(string[i] != '\0')
+  while(string[i] != '\0' && i < 80)
   {
     string[i] = '\0';
+      //flushstring works if this is made into a space, though then it does dumb things.
+      //perhaps we need a different flush string function for printing things..?
     i++;
   }
 }

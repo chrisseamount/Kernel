@@ -46,7 +46,7 @@ void chellMain()
     return;
   }
   //if  userstring = clearString
-  if(checkString("clear"))
+  else if(checkString("clear"))
   {
     flushString(buffer);
     clear(screenvars.videoPtr);
@@ -56,43 +56,49 @@ void chellMain()
     return;
   }
   //if userstring = print()
-  if(checkString("print"))
+  else if(checkString("print"))
   {
     newLine();
     toPrint(userString);
     return;
   }
-  if(checkString("hex"))
+  //if userstring = hex
+  else if(checkString("hex"))
   {
     newLine();
     toPrint(DtoHMain(userString));
     return;
   }
-  if(checkString("bin"))
+  //if userstring = bin
+  else if(checkString("bin"))
   {
     newLine();
     toPrint(DtoBMain(userString));
     return;
   }
-  if(checkString("help"))
+  //if userstring = help
+  else if(checkString("help"))
   {
     screenvars.helpFlag = 1;
     return;
   }
-  if(checkString("add"))
+  //if userstring = add
+  else if(checkString("add"))
   {
     newLine();
     split(userString);
     toPrint(add(word,userString));
     return;
   }
-  if(checkString("mul"))
+  //if userstring = mul
+  else if(checkString("mul"))
   {
     newLine();
     split(userString);
     toPrint(mul(word,userString));
     return;
   }
+  //if userstring = sub
   if(checkString("sub"))
   {
     newLine();
@@ -110,7 +116,6 @@ void chellMain()
     flushString(retString);
     return;
   }
-
 }
 
 void stringCon(char* string1, char* string2)
@@ -131,11 +136,12 @@ void stringCon(char* string1, char* string2)
   retString[i+1] = '\0';
   return;
 }
-
+//take away only the first word. get rid of following space.
 void split(char string[])
 {
   flushString(word);
   unsigned char restOfString[79];
+  flushString(restOfString);
   int i = 0;
   while(string[i] != ' ' && i<=79)
   {
